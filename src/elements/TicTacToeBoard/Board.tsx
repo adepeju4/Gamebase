@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useChatContext } from "stream-chat-react";
 import Rukia from "@/assets/randomPlayerImages/rukia.jpeg";
 import Ichigo from "@/assets/randomPlayerImages/ichigo.jpeg";
@@ -10,7 +9,38 @@ import { Avatar, Tooltip } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { useStoreActions, useStoreState } from "easy-peasy";
 
-function checkWin(rows) {
+// Define types for the game state
+interface GameState {
+  rows: string[][];
+  winner: string;
+  turn: string;
+  player: string;
+}
+
+// Define types for the Board component props
+interface BoardProps {
+  channel: any; // Ideally this should be a more specific type from stream-chat
+  rivalName: string;
+}
+
+// Define types for move events
+interface MoveEvent {
+  type: string;
+  data?: {
+    rowIndex: number;
+    columnIndex: number;
+    winner?: boolean;
+    player?: string;
+    id?: string;
+    isBoardFull?: boolean;
+    turn?: string;
+    rows?: string[][];
+  };
+}
+
+
+
+function checkWin(rows: string[][]): number[] | undefined {
   const combos = [
     [0, 1, 2],
     [3, 4, 5],
@@ -22,7 +52,7 @@ function checkWin(rows) {
     [2, 5, 8],
   ];
 
-  const flattened = rows.reduce((acc, row) => acc.concat(row), []);
+  const flattened = rows.reduce((acc: string[], row: string[]) => acc.concat(row), []);
 
   return combos.find(
     (combo) =>
@@ -32,8 +62,8 @@ function checkWin(rows) {
   );
 }
 
-const getInitState = (creator, starter) => {
-  const initState = {
+const getInitState = (creator: boolean, starter?: string): GameState => {
+  const initState: GameState = {
     rows: [
       ["", "", ""],
       ["", "", ""],
@@ -46,22 +76,22 @@ const getInitState = (creator, starter) => {
   return initState;
 };
 
-function Board({ channel, rivalName }) {
+function Board({ channel, rivalName }: BoardProps) {
   const { client } = useChatContext();
   const isGameCreator = channel.state.members[client.userID].role === "owner";
-  const processedEventUUIDs = new Set();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showRivalTurn, setShowRivalTurn] = useState(false);
-  const [gameOutcome, setGameOutcome] = useState("");
+  const processedEventUUIDs = new Set<string>();
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [showRivalTurn, setShowRivalTurn] = useState<boolean>(false);
+  const [gameOutcome, setGameOutcome] = useState<string>("");
   const updateGameStats = useStoreActions((actions) => actions.setGameStat);
 
-  const [rivalMessage, setrivalMessage] = useState("");
+  const [rivalMessage, setrivalMessage] = useState<string>("");
 
-  const [gameState, setGameState] = useState(getInitState(isGameCreator));
+  const [gameState, setGameState] = useState<GameState>(getInitState(isGameCreator, "X"));
 
-  const nextMove = { X: "O", O: "X" };
+  const nextMove: Record<string, string> = { X: "O", O: "X" };
 
-  const gameMessage = {
+  const gameMessage: Record<string, string> = {
     win: "Yay, you won!🎉🎉🎉🎉🎉",
     loss: "Sorry, you lost this round 🫠",
     draw: "Welp, it's a draw. Try again? 🤔",
@@ -69,7 +99,7 @@ function Board({ channel, rivalName }) {
 
   const callModal = () => {
     const modalProps = {
-      title: gameMessage[gameOutcome],
+      title: gameMessage[gameOutcome as keyof typeof gameMessage] || "",
       body: "You can still continue with your partner, or leave the game",
       dispatch: isModalVisible,
       setDispatch: setIsModalVisible,
@@ -77,7 +107,7 @@ function Board({ channel, rivalName }) {
     return modalProps;
   };
 
-  const handlePlayerMove = (rowIndex, columnIndex) => {
+  const handlePlayerMove = (rowIndex: number, columnIndex: number) => {
     if (
       rowIndex >= 0 &&
       rowIndex < gameState.rows.length &&
@@ -89,7 +119,7 @@ function Board({ channel, rivalName }) {
         return;
       }
 
-      const newRows = gameState.rows;
+      const newRows = [...gameState.rows];
 
       newRows[rowIndex][columnIndex] = gameState.player;
 
@@ -114,7 +144,7 @@ function Board({ channel, rivalName }) {
         return {
           ...prev,
           rows: newRows,
-          winner: winner && gameState.player,
+          winner: winner ? gameState.player : "",
           turn: nextPlayer,
         };
       });
@@ -138,65 +168,79 @@ function Board({ channel, rivalName }) {
       setShowRivalTurn(true);
     }
   };
-  const applyOpponentMove = (move) => {
+  const applyOpponentMove = (move: MoveEvent) => {
     const {
-      rowIndex,
-      columnIndex,
-      winner,
-      player,
-      turn,
-      rows,
-      id,
-      isBoardFull,
+      type,
+      data,
     } = move;
 
-    if (player && player === gameState.player) return;
+    if (type === "move") {
+      if (data) {
+        const {
+          winner,
+          player,
+          turn,
+          rows,
+          id,
+          isBoardFull,
+        } = data;
 
-    // First, check if the event ID has already been processed
-    if (id && processedEventUUIDs.has(id)) {
-      return; // Stop processing if it's a duplicate
-    }
+        if (player && player === gameState.player) return;
 
-    // If the move results in a win, update the game outcome to 'loss' for the current player
-    if (winner) {
-      setGameOutcome("loss");
-      setIsModalVisible(true);
+        // First, check if the event ID has already been processed
+        if (id && processedEventUUIDs.has(id)) {
+          return; // Stop processing if it's a duplicate
+        }
 
-      processedEventUUIDs.add(id);
+        // If the move results in a win, update the game outcome to 'loss' for the current player
+        if (winner) {
+          setGameOutcome("loss");
+          setIsModalVisible(true);
 
-      // Determine the next starter based on the current player's role
-      const nextStarter = gameState.player === "X" ? "O" : "X";
-      resetGame(nextStarter); // Update to pass the next starter
+          if (id) processedEventUUIDs.add(id);
 
-      return;
-    }
+          // Determine the next starter based on the current player's role
+          const nextStarter = gameState.player === "X" ? "O" : "X";
+          resetGame(nextStarter); // Update to pass the next starter
 
-    if (isBoardFull && !winner) {
-      setGameOutcome("draw");
-      setIsModalVisible(true);
+          return;
+        }
 
-      processedEventUUIDs.add(id);
-      return;
-    }
+        if (isBoardFull && !winner) {
+          setGameOutcome("draw");
+          setIsModalVisible(true);
 
-    // Ensure the move is valid: the targeted cell is empty, and it's not the current player's move
-    if (
-      gameState.rows[rowIndex][columnIndex] === "" &&
-      player !== gameState.player
-    ) {
-      // Here, instead of using a pre-defined newState, calculate the new state based on the previous state
+          if (id) processedEventUUIDs.add(id);
+          return;
+        }
 
-      setGameState((prev) => {
-        return { ...prev, winner, turn, rows };
-      });
+        // Ensure the move is valid: the targeted cell is empty, and it's not the current player's move
+        if (
+          gameState.rows[data.rowIndex][data.columnIndex] === "" &&
+          player !== gameState.player
+        ) {
+          // Here, instead of using a pre-defined newState, calculate the new state based on the previous state
 
-      // Mark the event as processed to prevent duplicate handling
-      processedEventUUIDs.add(id);
-      setShowRivalTurn(false);
+          setGameState((prev) => {
+            return { 
+              ...prev, 
+              winner: winner ? "" : prev.winner, 
+              turn: turn || prev.turn, 
+              rows: rows || prev.rows 
+            };
+          });
+
+          // Mark the event as processed to prevent duplicate handling
+          if (id) processedEventUUIDs.add(id);
+          setShowRivalTurn(false);
+        }
+      }
+    } else if (type === "reset-game") {
+      resetGame(null);
     }
   };
 
-  const resetGame = (nextStarter = null) => {
+  const resetGame = (nextStarter: string | null = null) => {
     const starter = nextStarter ? nextStarter : isGameCreator ? "X" : "O";
     setGameState(getInitState(isGameCreator, starter));
   };
@@ -219,11 +263,11 @@ function Board({ channel, rivalName }) {
   };
 
   useEffect(() => {
-    const handleChannelEvent = (event) => {
+    const handleChannelEvent = (event: any) => {
       if (event.type === "move") {
-        applyOpponentMove(event.data);
+        applyOpponentMove(event);
       } else if (event.type === "reset-game") {
-        resetGame({ isCreator: isGameCreator, turn: gameState.turn });
+        resetGame(null);
       }
     };
 
@@ -232,7 +276,7 @@ function Board({ channel, rivalName }) {
     return () => channel.off("messaging", handleChannelEvent);
   }, [channel]);
 
-  const handleGameOutcome = (outcome) => {
+  const handleGameOutcome = (outcome: string) => {
     const gameId = channel.id; // Use your channel's unique identifier as the game ID
     updateGameStats({ gameId, statType: outcome });
   };
@@ -296,7 +340,7 @@ function Board({ channel, rivalName }) {
       <div className="board" id={"board"}>
         {(gameState.rows || []).map((row, rowIndex) => (
           <Row
-            rivalTurn={showRivalTurn}
+            turn={showRivalTurn}
             key={rowIndex}
             columns={row}
             row={rowIndex}
@@ -305,7 +349,7 @@ function Board({ channel, rivalName }) {
           />
         ))}
 
-        <GameStats channel={channel.id} />
+        <GameStats gameId={channel.id} />
         <button onClick={handleGameReset}>Reset board</button>
       </div>
       <div>
@@ -337,7 +381,11 @@ function Board({ channel, rivalName }) {
   );
 }
 
-const GameStats = ({ gameId }) => {
+interface GameStatsProps {
+  gameId: string;
+}
+
+const GameStats = ({ gameId }: GameStatsProps) => {
   const gameStats = useStoreState(
     (state) => state.gameStats[gameId] || { wins: 0, losses: 0, draws: 0 }
   );
@@ -350,6 +398,5 @@ const GameStats = ({ gameId }) => {
     </div>
   );
 };
-
 
 export default Board;

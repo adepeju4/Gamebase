@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-mongoose.connection.on('disconnected', (error) => {
+mongoose.connection.on('disconnected', () => {
   console.warn(`lost database connection`);
 });
 
@@ -17,10 +17,13 @@ mongoose.connection.on('error', (error) => {
 });
 
 const startDB = () => {
-  mongoose.connect(process.env.CONNECT_API, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  const connectionString = process.env.CONNECT_API;
+  if (!connectionString) {
+    console.error('CONNECT_API environment variable is not defined');
+    process.exit(-1);
+  }
+  
+  mongoose.connect(connectionString);
   mongoose.connection.on('connected', () => {
     console.log('Database connected');
   });

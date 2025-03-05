@@ -4,7 +4,7 @@ import path from "path";
 import envCompatible from "vite-plugin-env-compatible";
 
 export default defineConfig({
-  plugins: [react(), envCompatible()],
+  plugins: [react()],
   server: {
     proxy: {
       "/Api": "http://localhost:3000",
@@ -14,5 +14,6 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
   },
-});
+}); 

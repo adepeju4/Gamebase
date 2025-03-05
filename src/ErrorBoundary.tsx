@@ -1,7 +1,18 @@
-import React, { Component } from 'react';
 
-export class ErrorBoundary extends Component {
-  constructor(props) {
+import { Component, ReactNode, ErrorInfo } from "react";
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
+}
+
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false,
@@ -10,11 +21,11 @@ export class ErrorBoundary extends Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.log('Something went wrong:', { error, errorInfo });
     this.setState({
       hasError: true,
@@ -35,4 +46,4 @@ export class ErrorBoundary extends Component {
 
     return this.props.children;
   }
-}
+} 

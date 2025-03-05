@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import "./scss/global.scss";
 import TicTacToe from "./components/Game/TicTacToe";
 import Ludo from "./components/Game/Ludo";
 import Chess from "./components/Game/Chess";
 import { StoreProvider } from "easy-peasy";
-import store from "./lib/store.js";
+import store from "./lib/store";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import SignUp from "./components/Auth/SignUp";
 import LogIn from "./components/Auth/Login";
@@ -13,13 +13,15 @@ import ShootingStars from "./elements/ShootingStars";
 
 import ChooseGame from "./components/ChooseGame";
 import Provider from "./components/Provider";
-import Layout from "./pages/Layout.jsx";
-import JoinGame from "./components/JoinGame.jsx";
+import Layout from "./pages/Layout";
+import JoinGame from "./components/JoinGame";
 
 import { StreamChat } from "stream-chat";
 
+// Use the User interface from declarations.d.ts
+
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const client = StreamChat.getInstance(import.meta.env.VITE_KEY);
   const router = createBrowserRouter([
     {
@@ -42,7 +44,7 @@ function App() {
       path: "/",
       element: (
         <Provider user={user} setUser={setUser} client={client}>
-          <ChooseGame />,
+          <ChooseGame />
         </Provider>
       ),
     },
@@ -50,15 +52,15 @@ function App() {
       path: "/join",
       element: (
         <Provider user={user} setUser={setUser} client={client}>
-          <JoinGame client={client} />,
+          <JoinGame client={client} />
         </Provider>
       ),
     },
     {
       path: "tic-tac-toe",
       element: (
-        <Provider user={user}>
-          <TicTacToe />,
+        <Provider user={user} client={client} setUser={setUser}>
+          <TicTacToe />
         </Provider>
       ),
     },

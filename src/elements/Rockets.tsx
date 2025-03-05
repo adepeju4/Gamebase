@@ -1,4 +1,4 @@
-import React from 'react';
+
 import rocket1 from '../assets/6-removebg-preview 1.svg';
 import rocket2 from '../assets/5-removebg-preview 1.svg';
 
