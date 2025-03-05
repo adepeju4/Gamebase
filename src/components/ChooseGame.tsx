@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import selectImg from "../assets/selectgame.svg";
 import ludo from "../assets/ludo.svg";
 import chess from "../assets/chess.svg";
@@ -54,7 +54,7 @@ function ChooseGame() {
     },
   ];
 
-  const handleActiveGame = (game, path) => {
+  const handleActiveGame = (game: string, path: string) => {
     setGame(game);
     setGamePath(path);
   };

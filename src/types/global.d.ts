@@ -9,11 +9,14 @@ interface ErrorObject {
 
 // User type
 interface User {
-  id: string;
-  username: string;
-  firstName?: string;
-  lastName?: string;
-  // Add other user properties as needed
+  id?: string;
+  username?: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  token?: string;
+  userId?: string;
+  hashedPassword?: string;
 }
 
 // Game statistics type

@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react';
 
-export function useDispatchComp(Comp, props) {
+export function useDispatchComp<P extends object>(Comp: React.ComponentType<P>, props: P) {
   return <Comp {...props} />;
 }

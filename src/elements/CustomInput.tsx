@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../scss/_game.scss';
 
 function CustomInput() {
+  const [message, setMessage] = useState('');
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    console.log('Message submitted:', message);
+    setMessage('');
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(event.target.value);
   };
 
   return (
@@ -13,6 +21,8 @@ function CustomInput() {
           <textarea 
             className="str-chat__textarea"
             placeholder="Type your message"
+            value={message}
+            onChange={handleChange}
           />
         </div>
         <button onClick={handleSubmit}> Send Message</button>

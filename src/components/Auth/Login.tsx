@@ -1,17 +1,32 @@
-import React, { useState } from "react";
-import fetcher from "../../lib/fetcher.js";
-import { useDispatchComp } from "../../lib/hooks";
-import Modal from "../../elements/Modal/Modal";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
-import { Link, useNavigate } from "react-router-dom";
-import { Input } from "antd";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import fetcher from "../../lib/fetcher";
+import Modal from "../../elements/Modal/Modal";
+import { Link } from "react-router-dom";
+import { useDispatchComp } from "../../lib/hooks";
+
+interface UserFormData {
+  userName?: string;
+  password?: string;
+  [key: string]: string | undefined;
+}
+
+interface InputErrorState {
+  userName?: boolean;
+  password?: boolean;
+  [key: string]: boolean | undefined;
+}
+
+const cookies = new Cookies();
 
 function LogIn() {
-  const cookies = new Cookies();
   const [pending, setPending] = useState(false);
-  const [user, setUser] = useState({});
-  const [error, setError] = useState(null);
-  const [inputError, setinputError] = useState({});
+  const [user, setUser] = useState<UserFormData>({});
+  const [error, setError] = useState<string | null>(null);
+  const [inputError, setinputError] = useState<InputErrorState>({});
 
   const navigate = useNavigate();
 
@@ -22,25 +37,30 @@ function LogIn() {
     setDispatch: setError,
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       setPending(true);
-      const result = await fetcher("/Api/Auth/login", user);
+      const result = await fetcher("/Api/Auth/login", {
+        method: 'POST',
+        body: user
+      });
 
-      if (!result.err) {
-        cookies.set("firstName", result.firstName);
-        cookies.set("userName", result.userName);
-        cookies.set("lastName", result.lastName);
-        cookies.set("userId", result.userId);
-        cookies.set("token", result.token);
-        cookies.set("hashedPassword", result.password);
+      const userData = result.success ? result.data : null;
+
+      if (userData) {
+        cookies.set("firstName", userData.firstName);
+        cookies.set("userName", userData.userName);
+        cookies.set("lastName", userData.lastName);
+        cookies.set("userId", userData.userId);
+        cookies.set("token", userData.token);
+        cookies.set("hashedPassword", userData.hashedPassword);
 
         navigate("/");
         return;
       }
 
-      setError(result.err);
+      
     } catch (error) {
       setError("Something went wrong");
     }
@@ -90,9 +110,9 @@ function LogIn() {
 
       <Link to="/signup">Don&apos;t have an account? Sign up</Link>
 
-      <button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending}>
         {pending ? "Logging In" : "Log In"}
-      </button>
+      </Button>
 
       {error && useDispatchComp(Modal, modalProps)}
     </form>

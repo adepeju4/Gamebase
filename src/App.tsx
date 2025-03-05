@@ -17,8 +17,7 @@ import Layout from "./pages/Layout";
 import JoinGame from "./components/JoinGame";
 
 import { StreamChat } from "stream-chat";
-
-// Use the User interface from declarations.d.ts
+import { User } from "./types/declarations";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);

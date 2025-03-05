@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { StoreActions, useStoreActions } from "easy-peasy";
+import { StreamChat } from "stream-chat";
+import { User } from "../types/declarations";
 
 interface ProviderProps {
   user: User | null;
   children: React.ReactNode;
-  client: StreamChat<DefaultGenerics>;
-  setUser?: (user: User | null) => void;
+  client: StreamChat;
+  setUser?: Dispatch<SetStateAction<User | null>>;
 }
 
 function Provider({ user, children, client, setUser: externalSetUser }: ProviderProps) {
@@ -27,13 +29,19 @@ function Provider({ user, children, client, setUser: externalSetUser }: Provider
             firstName: cookies.get("firstName"),
             lastName: cookies.get("lastName"),
             hashedPassword: cookies.get("hashedPassword"),
-            name: cookies.get("userName")
           },
           token
         )
-        .then((user: User) => {
-          setUser(user);
-          if (externalSetUser) externalSetUser(user);
+        .then(() => {
+          const userData = {
+            id: cookies.get("userId"),
+            userName: cookies.get("userName"),
+            firstName: cookies.get("firstName"),
+            lastName: cookies.get("lastName"),
+          } as User;
+          
+          setUser(userData);
+          if (externalSetUser) externalSetUser(userData);
         });
     }
   }, [token, client, externalSetUser]);

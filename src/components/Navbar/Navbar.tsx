@@ -1,12 +1,13 @@
-import React from "react";
+
 import BackButton from "../../elements/BackButton";
 
 import PropTypes from "prop-types";
 import Cookies from "universal-cookie";
 import { useStoreActions } from "easy-peasy";
 import { useLocation, useNavigate } from "react-router-dom";
+import { StreamChat } from "stream-chat";
 
-function Navbar({ client }) {
+function Navbar({ client }: { client: StreamChat }) {
   const cookies = new Cookies();
   const navigate = useNavigate();
   const setGame = useStoreActions((state) => state.setActiveGame);

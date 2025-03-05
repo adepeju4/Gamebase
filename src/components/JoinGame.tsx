@@ -1,93 +1,104 @@
-/* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
 
-import { useDispatchComp } from "../lib/hooks";
-import Modal from "../elements/Modal/Modal";
-
-import JoinGameForm from "../elements/JoinGameForm/JoinGameForm";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import JoinGameForm from "../elements/JoinGameForm/JoinGameForm";
+import BackButton from "../elements/BackButton";
+import Modal from "../elements/Modal/Modal";
+import { v4 as uuidv4 } from "uuid";
+// import Cookies from "universal-cookie";
 import Navbar from "./Navbar/Navbar";
+import { StreamChat } from "stream-chat";
 
-function JoinGame({ client }) {
-  const selectedGame = useStoreState((state) => state.activeGame);
-  const [error, setError] = useState(null);
+// const cookies = new Cookies();
 
+interface JoinGameProps {
+  client: StreamChat; 
+}
+
+function JoinGame({ client }: JoinGameProps) {
   const navigate = useNavigate();
-  const activeGame = useStoreState((state) => state.activeGame);
-  const activeGamePath = useStoreState((state) => state.activeGamePath);
-  const channel = useStoreState((state) => state.channel);
-  const setChannel = useStoreActions((actions) => actions.setChannel);
-
-  const rivals = useStoreState((state) => state.rivals);
-  const setRivals = useStoreActions((state) => state.setRivals);
+  const [rivals, setRivals] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const activeGame = useStoreState((state: any) => state.activeGame);
+  const setChannel = useStoreActions((actions: any) => actions.setChannel);
 
   const modalProps = {
-    title: ":( Opps!",
-    body: rivals.includes(client?.user?.name)
-      ? "You cannot play with yourself :)"
-      : `User ${rivals[0]} not found...`,
-    dispatch: error,
-    setDispatch: setError,
+    title: "Error",
+    body: "",
+    footer: "Close",
   };
 
-  const createChannel = async () => {
+  const onCreateChannel = async () => {
     try {
-      const queryPromises = rivals.map((rivalName) =>
-        client.queryUsers({ name: { $eq: rivalName } })
+      const channelId = uuidv4();
+      const newChannel = client.channel("gaming", channelId, {
+        name: activeGame,
+        members: [client.userID || ""],
+      });
+
+      await newChannel.create();
+      setChannel(newChannel);
+
+      // Query for rivals
+      const queryPromises = rivals.map((rivalName: string) =>
+        client.queryUsers({ name: rivalName })
       );
 
-      const responses = await Promise.all(queryPromises);
+      const queryResults = await Promise.all(queryPromises);
+      const rivalUsers = queryResults.flatMap((result) => result.users);
 
-      const foundUsers = responses
-        .map((response) => response.users[0])
-        .filter(Boolean);
-
-      if (foundUsers.length > 0) {
-        const memberIds = foundUsers.map((user) => user.id);
-        memberIds.push(client.userID);
-
-        const newChannel = await client.channel("messaging", {
-          image:
-            "https://getstream.io/random_svg/?id=blue-sand-2&name=Blue+Sand",
-          name: activeGame,
-          members: memberIds,
-        });
-
-        await newChannel.watch();
-        setChannel(newChannel);
-        navigate(activeGamePath);
-      } else {
-        setError(true);
+      if (rivalUsers.length) {
+        await newChannel.addMembers(rivalUsers.map((user) => user.id));
       }
+
+      navigate(`/${activeGame.toLowerCase().replace(/\s+/g, "-")}`);
     } catch (error) {
-      console.log(error);
-      modalProps.body = error.message;
-      setError(error.message);
+      setIsModalVisible(true);
+      setError("Failed to create channel");
     }
+  };
+
+  const handleBackButton = () => {
+    navigate("/");
   };
 
   useEffect(() => {
-    if (!activeGame) {
-      navigate("/");
+    try {
+      if (!activeGame) {
+        navigate("/");
+      }
+    } catch (error: any) {
+      modalProps.body = error.message;
+      setError(error.message);
+      setIsModalVisible(true);
     }
-  }, [channel]);
+  }, [activeGame, navigate]);
 
   return (
     <>
       <Navbar client={client} />
-
-      <div className="h-full w-full flex items-center justify-center p-8">
-        <JoinGameForm
-          game={selectedGame}
-          client={client}
-          onCreateChannel={createChannel}
-          rivals={rivals}
-          setRivals={setRivals}
-        />
+      <div className="joinGameContainer">
+        <BackButton handleBackButton={handleBackButton} />
+        <div className="joinGameContent">
+          <h1>Join {activeGame} Game</h1>
+          <JoinGameForm
+            game={activeGame}
+            onCreateChannel={onCreateChannel}
+            setRivals={setRivals}
+            client={client}
+          />
+        </div>
+        {isModalVisible && (
+          <Modal
+            title={modalProps.title}
+            body={error || modalProps.body}
+            footer={modalProps.footer}
+            setOpenModal={setIsModalVisible}
+          />
+        )}
       </div>
-
-      {error && useDispatchComp(Modal, modalProps)}
     </>
   );
 }

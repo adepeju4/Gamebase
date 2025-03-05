@@ -34,15 +34,24 @@ declare module 'easy-peasy' {
 declare module '*.js';
 declare module 'uuid';
 declare module 'stream-chat';
+declare module 'stream-chat-react' {
+  export const Channel: React.ComponentType<any>;
+  export const Chat: React.ComponentType<any>;
+  export const Window: React.ComponentType<any>;
+  export const MessageList: React.ComponentType<any>;
+  export const MessageInput: React.ComponentType<any>;
+  export const ChannelHeader: React.ComponentType<any>;
+  export function useChatContext(): any;
+}
 
 // Define User type
-interface User {
+export interface User {
   id: string;
-  name: string;
+  userName: string;
   image?: string;
   online?: boolean;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   hashedPassword?: string;
 }
 

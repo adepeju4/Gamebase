@@ -1,32 +1,48 @@
-import React, { useState } from "react";
-import { useDispatchComp } from "../../lib/hooks";
-import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import ModalContent from "./ModalContent";
+import { motion, AnimatePresence } from "framer-motion";
 
-function Modal({ ...props }) {
-  const [modalOpen, setModalOpen] = useState(props.dispatch ? true : false);
+interface ModalProps {
+  title: string;
+  body: string | React.ReactNode;
+  footer?: string | React.ReactNode;
+  setOpenModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  setDispatch?: (value: any) => void;
+  callback?: () => void;
+}
+
+function Modal({
+  title,
+  body,
+  footer,
+  setOpenModal,
+  setDispatch,
+  callback,
+}: ModalProps) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const modalSetter = setOpenModal || setIsOpen;
 
   return (
-    <>
-      <AnimatePresence>
-        {modalOpen &&
-          useDispatchComp(ModalContent, {
-            ...props,
-            setOpenModal: setModalOpen,
-          })}
-      </AnimatePresence>
-
-      {!props.dispatch && (
-        <button
-          className="openModalBtn"
-          onClick={() => {
-            setModalOpen(true);
-          }}
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          className="modal-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
         >
-          Open
-        </button>
+          <ModalContent
+            title={title}
+            body={body}
+            footer={footer}
+            setOpenModal={modalSetter}
+            setDispatch={setDispatch}
+            callback={callback}
+          />
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 }
 

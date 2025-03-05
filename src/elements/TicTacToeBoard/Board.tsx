@@ -9,6 +9,7 @@ import { Avatar, Tooltip } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { useStoreActions, useStoreState } from "easy-peasy";
 
+
 // Define types for the game state
 interface GameState {
   rows: string[][];
@@ -19,7 +20,7 @@ interface GameState {
 
 // Define types for the Board component props
 interface BoardProps {
-  channel: any; // Ideally this should be a more specific type from stream-chat
+  channel: any; // Using any temporarily to resolve type issues
   rivalName: string;
 }
 
@@ -123,7 +124,7 @@ function Board({ channel, rivalName }: BoardProps) {
 
       newRows[rowIndex][columnIndex] = gameState.player;
 
-      // Update the player's turn
+      
       const nextPlayer = nextMove[gameState.turn];
 
       const isBoardFull = gameState.rows.flat().every((cell) => cell !== "");
@@ -138,7 +139,7 @@ function Board({ channel, rivalName }: BoardProps) {
         setIsModalVisible(true);
       }
 
-      // Continue the game without setting an outcome
+    
 
       setGameState((prev) => {
         return {
@@ -148,7 +149,7 @@ function Board({ channel, rivalName }: BoardProps) {
           turn: nextPlayer,
         };
       });
-      // Send move through the channel
+     
       const eventId = uuidv4();
       processedEventUUIDs.add(eventId);
 
@@ -192,16 +193,15 @@ function Board({ channel, rivalName }: BoardProps) {
           return; // Stop processing if it's a duplicate
         }
 
-        // If the move results in a win, update the game outcome to 'loss' for the current player
         if (winner) {
           setGameOutcome("loss");
           setIsModalVisible(true);
 
           if (id) processedEventUUIDs.add(id);
 
-          // Determine the next starter based on the current player's role
+          
           const nextStarter = gameState.player === "X" ? "O" : "X";
-          resetGame(nextStarter); // Update to pass the next starter
+          resetGame(nextStarter); 
 
           return;
         }
@@ -214,12 +214,12 @@ function Board({ channel, rivalName }: BoardProps) {
           return;
         }
 
-        // Ensure the move is valid: the targeted cell is empty, and it's not the current player's move
+      
         if (
           gameState.rows[data.rowIndex][data.columnIndex] === "" &&
           player !== gameState.player
         ) {
-          // Here, instead of using a pre-defined newState, calculate the new state based on the previous state
+        
 
           setGameState((prev) => {
             return { 
@@ -230,7 +230,7 @@ function Board({ channel, rivalName }: BoardProps) {
             };
           });
 
-          // Mark the event as processed to prevent duplicate handling
+        
           if (id) processedEventUUIDs.add(id);
           setShowRivalTurn(false);
         }
@@ -277,12 +277,12 @@ function Board({ channel, rivalName }: BoardProps) {
   }, [channel]);
 
   const handleGameOutcome = (outcome: string) => {
-    const gameId = channel.id; // Use your channel's unique identifier as the game ID
+    const gameId = channel.id;
     updateGameStats({ gameId, statType: outcome });
   };
 
   useEffect(() => {
-    if (!gameOutcome) return; // Exit early if there's no outcome
+    if (!gameOutcome) return; 
 
     let message = "";
     let outcomeType = "";

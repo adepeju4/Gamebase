@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import fetcher from "../../lib/fetcher.js";
 import { useDispatchComp } from "../../lib/hooks";
 import Modal from "../../elements/Modal/Modal";
@@ -6,12 +6,28 @@ import Cookies from "universal-cookie";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "antd";
 
+interface InputErrorState {
+  firstName?: boolean;
+  lastName?: boolean;
+  userName?: boolean;
+  password?: boolean;
+  [key: string]: boolean | undefined;
+}
+
+interface UserFormData {
+  firstName?: string;
+  lastName?: string;
+  userName?: string;
+  password?: string;
+  [key: string]: string | undefined;
+}
+
 function SignUp() {
   const cookies = new Cookies();
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<UserFormData>({});
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
-  const [inputError, setinputError] = useState({});
+  const [inputError, setinputError] = useState<InputErrorState>({});
 
   const navigate = useNavigate();
 
@@ -22,36 +38,41 @@ function SignUp() {
     setDispatch: setError,
   };
 
-  const checkInputHandler = (input, label) => {
+  const checkInputHandler = (input: string, label: string) => {
     if (!input) setinputError({ ...inputError, [label]: true });
     else setinputError({ ...inputError, [label]: false });
   };
 
-  const inputErrorMessage = (input) => {
+  const inputErrorMessage = (input: string) => {
     return <p className="inputError"> {input} not provided</p>;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       setPending(true);
-      const result = await fetcher("Api/Auth/signup", user);
+      const result = await fetcher("/Api/Auth/signup", {
+        method: 'POST',
+        body: user
+      });
 
-      if (!result.err) {
-        cookies.set("firstName", result.firstName);
-        cookies.set("userName", result.userName);
-        cookies.set("lastName", result.lastName);
-        cookies.set("userId", result.userId);
-        cookies.set("token", result.token);
-        cookies.set("hashedPassword", result.password);
+      const userData = result.success ? result.data : null;
+
+      if (userData) {
+        cookies.set("firstName", userData.firstName);
+        cookies.set("userName", userData.userName);
+        cookies.set("lastName", userData.lastName);
+        cookies.set("userId", userData.userId);
+        cookies.set("token", userData.token);
+        cookies.set("hashedPassword", userData.hashedPassword);
 
         navigate("/");
         return;
       }
 
-      setError(result.err);
+     
     } catch (error) {
-      setError("Something went wrong");
+      setError(true);
     }
     setPending(false);
   };
