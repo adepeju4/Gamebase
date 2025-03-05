@@ -6,5 +6,9 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "include": ["vite.config.ts"]
 } 

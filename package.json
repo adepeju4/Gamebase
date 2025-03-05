@@ -6,17 +6,17 @@
   "author": "Orefejo Adepeju",
   "license": "ISC",
   "scripts": {
-    "build": "tsc -p tsconfig.json && vite build",
-    "build:server": "tsc -p server/tsconfig.json",
+    "build": "npx tsc -p tsconfig.json && vite build",
+    "build:server": "npx tsc -p server/tsconfig.json",
     "dev:client": "vite",
-    "dev:server": "nodemon --exec ts-node --esm server/server.ts",
+    "dev:server": "nodemon --exec \"node --loader ts-node/esm server/server.ts\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "lint": "eslint . --ext ts,tsx,js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "gulp-prod": "node_modules/.bin/gulp prod",
     "gulp-dev": "node_modules/.bin/gulp dev",
-    "tsc": "tsc -p tsconfig.json",
-    "tsc:server": "tsc -p server/tsconfig.json"
+    "tsc": "npx tsc -p tsconfig.json",
+    "tsc:server": "npx tsc -p server/tsconfig.json"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",

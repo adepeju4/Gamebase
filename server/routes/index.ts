@@ -1,4 +1,4 @@
-import AuthRoute from './AuthRoute.js';
+import AuthRoute from './AuthRoute.ts';
 import { Router } from 'express';
 
 const router = Router();
