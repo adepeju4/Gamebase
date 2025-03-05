@@ -9,6 +9,7 @@
     "build": "npx tsc -p tsconfig.json && vite build",
     "build:server": "npx tsc -p server/tsconfig.json",
     "vercel-build": "npm run build",
+    "vercel-install": "npm install --legacy-peer-deps",
     "dev:client": "vite",
     "dev:server": "nodemon --exec \"node --loader ts-node/esm server/server.ts\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
@@ -41,7 +42,6 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-router-dom": "^6.22.2",
-    "react-scripts": "^5.0.0",
     "stream-chat": "^8.19.0",
     "stream-chat-react": "^11.11.0",
     "tailwind-merge": "^2.2.1",
@@ -71,7 +71,7 @@
     "postcss": "^8.4.35",
     "sass": "^1.71.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2",
+    "typescript": "^5.0.4",
     "vite": "^5.1.4",
     "vite-plugin-env-compatible": "^2.0.1"
   }
