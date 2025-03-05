@@ -12,27 +12,35 @@ interface ErrorObject {
   message?: { err: string };
 }
 
-const app = express();
+// Initialize dotenv before creating the app
 dotenv.config();
+
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-process.env.NODE_ENV === "production" &&
-  app.use(
-    "/build",
-    express.static(path.join(path.dirname(__filename), "../build"))
-  );
+// Serve static files in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../dist")));
+}
 
-app.get("/", (_: Request, res: Response) => {
-  return res
-    .status(200)
-    .sendFile(path.join(path.dirname(__filename), "../index.html"));
-});
-
+// API routes
 app.use("/Api", router);
+
+// Serve index.html for all other routes in production
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (_: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../dist/index.html"));
+  });
+} else {
+  app.get("/", (_: Request, res: Response) => {
+    return res.status(200).json({ message: "API is running" });
+  });
+}
 
 // Unknown route handler
 app.use((_: Request, res: Response) => res.status(404).send({ message: "Route not found" }));
@@ -50,5 +58,15 @@ app.use((err: ErrorObject, _: Request, res: Response, __: NextFunction) => {
 });
 
 console.log('current state of node environment is -> ', process.env.NODE_ENV);
-startDB(); // starting mongodb database
-app.listen(3000, () => console.log('listening on port ' + 3000)); //listens on port 3000 -> http://localhost:3000/
+
+// Connect to database
+startDB();
+
+// For local development
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`listening on port ${PORT}`));
+}
+
+// For Vercel serverless functions
+export default app;
