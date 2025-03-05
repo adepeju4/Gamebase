@@ -4,7 +4,7 @@ import { Router, Request, Response } from 'express';
 const router = Router();
 
 // Test endpoint to verify the server is working
-router.get('/test', (req: Request, res: Response) => {
+router.get('/test', (_: Request, res: Response) => {
   return res.status(200).json({ message: 'Server is running!' });
 });
 
