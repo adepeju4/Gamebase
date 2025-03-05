@@ -8,6 +8,7 @@
   "scripts": {
     "build": "npx tsc -p tsconfig.json && vite build",
     "build:server": "npx tsc -p server/tsconfig.json",
+    "vercel-build": "npm run build",
     "dev:client": "vite",
     "dev:server": "nodemon --exec \"node --loader ts-node/esm server/server.ts\"",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
