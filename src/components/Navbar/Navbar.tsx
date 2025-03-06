@@ -64,6 +64,7 @@ function Navbar() {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate('/')}>Games</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogOut}>Log out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

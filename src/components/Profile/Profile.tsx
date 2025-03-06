@@ -1,86 +1,157 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { Avatar, AvatarImage } from '../ui/avatar';
-import fetcher from '@/lib/fetcher';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
+import { toast } from 'sonner';
 import Cookies from 'universal-cookie';
+import fetcher from '../../lib/fetcher';
 
+// Profile component for managing user profile information
 function Profile() {
+  const navigate = useNavigate();
   const cookies = new Cookies();
-  const [firstName, setFirstName] = useState('Adepeju');
-  const [lastName, setLastName] = useState('Orefejo');
-  const [email, setEmail] = useState('test@test.com');
-  const [profileImage, setProfileImage] = useState('https://example.com/profile.jpg');
 
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+
+  // Load user profile data when component mounts
   useEffect(() => {
-    const getUserProfile = async () => {
-      const token = cookies.get('token');
+    getUserProfile();
+  }, []);
 
-      const response = await fetcher('/Api/profile', {
+  // Fetch user profile data from the API
+  const getUserProfile = async () => {
+    try {
+      setLoading(true);
+      const response = await fetcher('/Api/Auth/profile', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+      });
+
+      if (response.success && response.data) {
+        // Update state with user data
+        setFirstName(response.data.firstName);
+        setLastName(response.data.lastName);
+        setUserName(response.data.userName);
+        setEmail(response.data.email);
+
+        // Set profile image if available, otherwise use placeholder
+        if (response.data.profileImage) {
+          setProfileImage(response.data.profileImage);
+        } else {
+          setProfileImage(
+            `https://ui-avatars.com/api/?name=${response.data.firstName}+${response.data.lastName}&background=random`
+          );
+        }
+      } else {
+        toast.error('Failed to load profile. Please try again.');
+        // Redirect to login if unauthorized
+        if (response.status === 401) {
+          navigate('/login');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      toast.error('An error occurred while loading your profile.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle profile update
+  const handleUpdate = async () => {
+    try {
+      setUpdating(true);
+
+      const response = await fetcher('/Api/Auth/profile', {
+        method: 'PUT',
+        body: {
+          firstName,
+          lastName,
         },
       });
 
       if (response.success) {
-        setFirstName(response.data.firstName);
-        setLastName(response.data.lastName);
-        setEmail(response.data.email);
-        setProfileImage(response.data.profileImage);
+        // Update cookies with new values
+        cookies.set('firstName', firstName);
+        cookies.set('lastName', lastName);
+
+        toast.success('Profile updated successfully!');
+      } else {
+        toast.error(response.error || 'Failed to update profile.');
       }
-    };
-
-    getUserProfile();
-  }, []);
-
-  const handleUpdate = async () => {
-    const token = cookies.get('token');
-
-    await fetcher('/Api/profile', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: {
-        firstName,
-        lastName,
-        email,
-        profileImage,
-      },
-    });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('An error occurred while updating your profile.');
+    } finally {
+      setUpdating(false);
+    }
   };
 
-  return (
-    <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-2">Profile</h1>
-      <p className="text-sm text-gray-500 mb-4">Manage your Kepler profile</p>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg">Loading profile...</p>
+      </div>
+    );
+  }
 
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">Profile picture</h2>
-        <Avatar>
-          <AvatarImage src={profileImage} alt="Profile" className="w-24 h-24 rounded-full" />
-        </Avatar>
+  return (
+    <div className="p-8 max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-1">Profile</h1>
+      <p className="text-sm text-gray-500 mb-8">Manage your Kepler profile</p>
+
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold mb-4">Profile picture</h2>
+        <div className="flex justify-center">
+          <Avatar className="w-24 h-24">
+            <AvatarImage src={profileImage} alt={`${firstName} ${lastName}`} />
+            <AvatarFallback className="text-lg">
+              {userName
+                ? userName.substring(0, 2).toUpperCase()
+                : firstName && lastName
+                  ? `${firstName[0]}${lastName[0]}`
+                  : 'U'}
+            </AvatarFallback>
+          </Avatar>
+        </div>
       </div>
 
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">Email</h2>
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-2">Email</h2>
         <p className="text-gray-500">{email}</p>
       </div>
 
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">First Name</h2>
-        <Input value={firstName} onChange={e => setFirstName(e.target.value)} />
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-2">First Name</h2>
+        <Input
+          value={firstName}
+          onChange={e => setFirstName(e.target.value)}
+          className="bg-gray-800 border-gray-700 text-white"
+        />
       </div>
 
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold">Last Name</h2>
-        <Input value={lastName} onChange={e => setLastName(e.target.value)} />
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold mb-2">Last Name</h2>
+        <Input
+          value={lastName}
+          onChange={e => setLastName(e.target.value)}
+          className="bg-gray-800 border-gray-700 text-white"
+        />
       </div>
 
-      <Button onClick={handleUpdate}>Update</Button>
+      <Button
+        onClick={handleUpdate}
+        disabled={updating}
+        className="bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        {updating ? 'Updating...' : 'Update'}
+      </Button>
     </div>
   );
 }

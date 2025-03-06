@@ -4,8 +4,28 @@
 # Increase Node.js memory limit
 export NODE_OPTIONS="--max-old-space-size=4096"
 
-# Format files
-npx lint-staged --no-stash
+# Print a message to indicate the hook is running
+echo "🔍 Running pre-commit hooks..."
+
+# Format files with lint-staged
+echo "💅 Running prettier on staged files..."
+npx lint-staged --no-stash || {
+  echo "❌ Prettier formatting failed. Please fix the issues and try again."
+  exit 1
+}
+
+# Run ESLint on staged files (optional)
+# echo "🧹 Running ESLint on staged files..."
+# npx lint-staged --no-stash --config .lintstagedrc.eslint.json || {
+#   echo "❌ ESLint check failed. Please fix the issues and try again."
+#   exit 1
+# }
 
 # Type check (optional - uncomment if you want to run type checking on commit)
-# npm run type-check
+# echo "🔎 Running TypeScript type check..."
+# npm run type-check || {
+#   echo "❌ TypeScript type check failed. Please fix the issues and try again."
+#   exit 1
+# }
+
+echo "✅ Pre-commit hooks completed successfully!"

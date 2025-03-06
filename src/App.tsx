@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import { User } from './types/declarations';
 import { getCurrentUser } from './lib/auth';
+import Profile from './components/Profile/Profile';
 
 function App() {
   // Initialize user from auth utility
@@ -89,6 +90,17 @@ function App() {
         </ProtectedRoute>
       ),
     },
+    {
+      path: '/profile',
+      element: (
+        <ProtectedRoute>
+          <Provider user={user} setUser={setUser}>
+            <Profile />
+          </Provider>
+        </ProtectedRoute>
+      ),
+    },
+
     // Catch-all route - redirect to home
     {
       path: '*',
