@@ -8,7 +8,7 @@ import store from "./lib/store";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import SignUp from "./components/Auth/SignUp";
 import LogIn from "./components/Auth/Login";
-import ShootingStars from "./elements/ShootingStars";
+
 
 import ChooseGame from "./components/ChooseGame";
 import Provider from "./components/Provider";

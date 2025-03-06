@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import {  useStoreState } from "easy-peasy";
 import JoinGameForm from "../elements/JoinGameForm/JoinGameForm";
 import BackButton from "../elements/BackButton";
 import Modal from "../elements/Modal/Modal";

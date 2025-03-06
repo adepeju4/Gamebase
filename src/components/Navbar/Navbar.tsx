@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+
 import Cookies from "universal-cookie";
 import { useStoreActions } from "easy-peasy";
 import { useLocation, useNavigate } from "react-router-dom";
