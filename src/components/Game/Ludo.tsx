@@ -1,9 +1,5 @@
-
-
 function Ludo() {
-  return (
-    <div>Ludo</div>
-  )
+  return <div>Ludo</div>;
 }
 
-export default Ludo
+export default Ludo;

@@ -18,17 +18,17 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title = 'Games FM' })
   return (
     <div className="auth-page">
       <AuthBackground />
-      
+
       <div className="w-full max-w-md mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">{title}</h1>
           <div className="flex justify-center gap-2">{bigStars}</div>
         </div>
-        
+
         {children}
       </div>
     </div>
   );
 };
 
-export default AuthLayout; 
+export default AuthLayout;

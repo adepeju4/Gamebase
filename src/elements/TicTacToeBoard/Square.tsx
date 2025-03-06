@@ -1,4 +1,3 @@
-
 interface SquareProps {
   rivalTurn: boolean;
   value: string;

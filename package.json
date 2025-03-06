@@ -18,7 +18,12 @@
     "gulp-prod": "node_modules/.bin/gulp prod",
     "gulp-dev": "node_modules/.bin/gulp dev",
     "tsc": "npx tsc -p tsconfig.json",
-    "tsc:server": "npx tsc -p server/tsconfig.json"
+    "tsc:server": "npx tsc -p server/tsconfig.json",
+    "type-check": "npx tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\" \"server/**/*.{ts,js}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\" \"server/**/*.{ts,js}\"",
+    "lint-staged": "lint-staged",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
@@ -74,6 +79,8 @@
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
     "concurrently": "^6.5.1",
@@ -81,9 +88,13 @@
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.4.3",
     "nodemon": "^3.1.0",
     "postcss": "^8.4.35",
+    "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
+    "tsc-files": "^1.1.4",
     "typescript": "^5.0.4",
     "vite": "^5.1.4",
     "vite-plugin-env-compatible": "^2.0.1"

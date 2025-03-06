@@ -33,27 +33,29 @@ const userSchema = new Schema({
     type: 'string',
     required: true,
   },
-  conversations: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Conversation'
-  }],
+  conversations: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Conversation',
+    },
+  ],
   unreadMessages: {
     type: Number,
-    default: 0
+    default: 0,
   },
   status: {
     type: String,
     enum: ['online', 'offline', 'away'],
-    default: 'offline'
+    default: 'offline',
   },
   profileImage: {
     type: String,
-    default: ''
+    default: '',
   },
   lastActive: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 const User = mongoose.model('user', userSchema);

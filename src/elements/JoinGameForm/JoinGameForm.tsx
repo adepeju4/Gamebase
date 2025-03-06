@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
+import { useState } from 'react';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
 
 interface JoinGameFormProps {
   game: string | null;
@@ -9,7 +9,7 @@ interface JoinGameFormProps {
 }
 
 function JoinGameForm({ onCreateGameRoom, setRivals }: JoinGameFormProps) {
-  const [rivalName, setRivalName] = useState("");
+  const [rivalName, setRivalName] = useState('');
 
   const handleChangeSingle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRivalName(e.target.value);

@@ -27,7 +27,10 @@ interface StoreModel {
   setActiveGamePath: (state: StoreModel, payload: string) => void;
   setGameRoom: (state: StoreModel, payload: GameRoom | null) => void;
   setRivals: (state: StoreModel, payload: string[]) => void;
-  setGameStat: (state: StoreModel, payload: { gameId: string, outcome: 'win' | 'loss' | 'draw' }) => void;
+  setGameStat: (
+    state: StoreModel,
+    payload: { gameId: string; outcome: 'win' | 'loss' | 'draw' }
+  ) => void;
   setSocketConnected: (state: StoreModel, payload: boolean) => void;
 }
 
@@ -39,40 +42,40 @@ const store = createStore<StoreModel>({
   rivals: [],
   gameStats: {},
   socketConnected: false,
-  
+
   setUser: action((state, payload) => {
     state.user = payload;
   }),
-  
+
   setActiveGame: action((state, payload) => {
     state.activeGame = payload;
   }),
-  
+
   setActiveGamePath: action((state, payload) => {
     state.activeGamePath = payload;
   }),
-  
+
   setGameRoom: action((state, payload) => {
     state.gameRoom = payload;
   }),
-  
+
   setRivals: action((state, payload) => {
     state.rivals = payload;
   }),
-  
+
   setGameStat: action((state, payload) => {
     const { gameId, outcome } = payload;
-    
+
     if (!state.gameStats[gameId]) {
       state.gameStats[gameId] = { wins: 0, losses: 0, draws: 0 };
     }
-    
+
     state.gameStats[gameId][outcome === 'win' ? 'wins' : outcome === 'loss' ? 'losses' : 'draws']++;
   }),
-  
+
   setSocketConnected: action((state, payload) => {
     state.socketConnected = payload;
   }),
 });
 
-export default store; 
+export default store;

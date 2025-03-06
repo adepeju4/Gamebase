@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React from 'react';
+import { motion } from 'framer-motion';
 
 interface ModalContentProps {
   title: string;
@@ -18,7 +18,6 @@ function ModalContent({
   footer,
   callback,
 }: ModalContentProps) {
-
   const modalContentAnimate = {
     initial: { x: 100, opacity: 0 },
     animate: { x: 0, opacity: 1, transition: { delay: 0.3 } },

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import ModalContent from "./ModalContent";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from 'react';
+import ModalContent from './ModalContent';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ModalProps {
   title: string;
@@ -11,14 +11,7 @@ interface ModalProps {
   callback?: () => void;
 }
 
-function Modal({
-  title,
-  body,
-  footer,
-  setOpenModal,
-  setDispatch,
-  callback,
-}: ModalProps) {
+function Modal({ title, body, footer, setOpenModal, setDispatch, callback }: ModalProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   const modalSetter = setOpenModal || setIsOpen;
@@ -26,7 +19,7 @@ function Modal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
+        <motion.div
           className="modal-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

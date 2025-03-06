@@ -24,34 +24,38 @@ const messageSchema = new Schema<IMessage>({
   conversationId: {
     type: Schema.Types.ObjectId,
     ref: 'Conversation',
-    required: true
+    required: true,
   },
   sender: {
     type: String,
-    required: true
+    required: true,
   },
   content: {
     type: String,
-    required: true
+    required: true,
   },
   timestamp: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
-  readBy: [{
-    userId: String,
-    readAt: Date
-  }],
-  attachments: [{
-    type: String,
-    url: String,
-    name: String,
-    size: Number
-  }],
+  readBy: [
+    {
+      userId: String,
+      readAt: Date,
+    },
+  ],
+  attachments: [
+    {
+      type: String,
+      url: String,
+      name: String,
+      size: Number,
+    },
+  ],
   isDeleted: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 // Create indexes for faster queries
@@ -60,4 +64,4 @@ messageSchema.index({ sender: 1 });
 
 // Create and export the Message model
 const Message = mongoose.model<IMessage>('Message', messageSchema);
-export default Message; 
+export default Message;

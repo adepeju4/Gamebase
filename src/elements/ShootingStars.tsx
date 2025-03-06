@@ -1,4 +1,3 @@
-
 function ShootingStars() {
   const shootingStars = [
     <section key={1} className="shootingWrapper">
@@ -28,10 +27,7 @@ function ShootingStars() {
   }
 
   const starBg = (
-    <div
-      className="starsbg"
-      style={{ boxShadow: result.substring(0, result.length - 1) }}
-    ></div>
+    <div className="starsbg" style={{ boxShadow: result.substring(0, result.length - 1) }}></div>
   );
 
   return (

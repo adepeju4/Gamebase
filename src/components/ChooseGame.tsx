@@ -1,40 +1,40 @@
-import { useEffect } from "react";
-import selectImg from "../assets/selectgame.svg";
-import ludo from "../assets/ludo.svg";
-import chess from "../assets/chess.svg";
-import tictactoe from "../assets/tictactoe.svg";
-import { useStoreActions } from "easy-peasy";
-import { useStoreState } from "easy-peasy";
+import { useEffect } from 'react';
+import selectImg from '../assets/selectgame.svg';
+import ludo from '../assets/ludo.svg';
+import chess from '../assets/chess.svg';
+import tictactoe from '../assets/tictactoe.svg';
+import { useStoreActions } from 'easy-peasy';
+import { useStoreState } from 'easy-peasy';
 
-import Navbar from "./Navbar/Navbar";
-import { useNavigate } from "react-router-dom";
-import GameCard from "../elements/GameCard";
+import Navbar from './Navbar/Navbar';
+import { useNavigate } from 'react-router-dom';
+import GameCard from '../elements/GameCard';
 
 function ChooseGame() {
-  const setGame = useStoreActions((state) => state.setActiveGame);
-  const setGamePath = useStoreActions((state) => state.setActiveGamePath);
-  const selectedGame = useStoreState((state) => state.activeGame);
+  const setGame = useStoreActions(state => state.setActiveGame);
+  const setGamePath = useStoreActions(state => state.setActiveGamePath);
+  const selectedGame = useStoreState(state => state.activeGame);
 
   const navigate = useNavigate();
 
   const gameOptions = [
     {
       gameImg: tictactoe,
-      gameName: "Tic Tac Toe",
+      gameName: 'Tic Tac Toe',
       description: "Classic game of X's and O's",
-      path: "/tic-tac-toe",
+      path: '/tic-tac-toe',
     },
     {
       gameImg: chess,
-      gameName: "Chess",
-      description: "Strategic board game of kings and queens",
-      path: "/chess",
+      gameName: 'Chess',
+      description: 'Strategic board game of kings and queens',
+      path: '/chess',
     },
     {
       gameImg: ludo,
-      gameName: "Ludo",
-      description: "Fun board game of dice and tokens",
-      path: "/ludo",
+      gameName: 'Ludo',
+      description: 'Fun board game of dice and tokens',
+      path: '/ludo',
     },
   ];
 
@@ -45,7 +45,7 @@ function ChooseGame() {
 
   useEffect(() => {
     if (selectedGame) {
-      navigate("/join");
+      navigate('/join');
     }
   }, [selectedGame]);
 
@@ -58,7 +58,7 @@ function ChooseGame() {
           <h1 className="text-4xl font-bold text-white">Select Game</h1>
 
           <div className="flex items-center gap-4">
-            <img src={selectImg} alt={"select game"} className="w-12 h-12" />
+            <img src={selectImg} alt={'select game'} className="w-12 h-12" />
             <p className="text-2xl font-bold text-white">0</p>
           </div>
         </header>

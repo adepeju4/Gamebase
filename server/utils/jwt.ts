@@ -3,9 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-for-development';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d'; 
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 // Define the payload structure
 export interface JwtPayload {
@@ -21,7 +20,7 @@ export interface JwtPayload {
  */
 export const generateToken = (payload: JwtPayload): string => {
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN
+    expiresIn: JWT_EXPIRES_IN,
   });
 };
 
@@ -35,7 +34,7 @@ export const verifyToken = (token: string): JwtPayload | null => {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     return decoded;
   } catch (error) {
-    console.error("JWT verification - failed:", error);
+    console.error('JWT verification - failed:', error);
     return null;
   }
 };
@@ -49,6 +48,6 @@ export const extractTokenFromHeader = (authHeader: string | undefined): string |
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
   }
-  
+
   return authHeader.split(' ')[1];
-}; 
+};

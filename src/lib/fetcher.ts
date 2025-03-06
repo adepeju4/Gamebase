@@ -26,7 +26,7 @@ const fetcher = async <T = any>(
 ): Promise<FetcherResponse<T>> => {
   // Create a new headers object
   const headers = new Headers(options.headers);
-  
+
   // Set content type if not already set
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
@@ -53,7 +53,7 @@ const fetcher = async <T = any>(
   try {
     const response = await fetch(url, config);
     const responseData = await response.json();
-    
+
     if (response.ok) {
       return {
         status: response.status,
@@ -61,7 +61,7 @@ const fetcher = async <T = any>(
         success: true,
       };
     }
-    
+
     // Handle authentication errors
     if (response.status === 401) {
       // If token is expired or invalid, redirect to login
@@ -70,7 +70,7 @@ const fetcher = async <T = any>(
         window.location.href = '/login';
       }
     }
-    
+
     return {
       status: response.status,
       error: responseData.message || 'An error occurred',
@@ -86,4 +86,4 @@ const fetcher = async <T = any>(
   }
 };
 
-export default fetcher; 
+export default fetcher;

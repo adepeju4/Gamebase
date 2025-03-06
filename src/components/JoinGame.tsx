@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {  useStoreState } from "easy-peasy";
-import JoinGameForm from "../elements/JoinGameForm/JoinGameForm";
-import BackButton from "../elements/BackButton";
-import Modal from "../elements/Modal/Modal";
-import Navbar from "./Navbar/Navbar";
-import { createGameRoom } from "../socket/socketClient";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useStoreState } from 'easy-peasy';
+import JoinGameForm from '../elements/JoinGameForm/JoinGameForm';
+import BackButton from '../elements/BackButton';
+import Modal from '../elements/Modal/Modal';
+import Navbar from './Navbar/Navbar';
+import { createGameRoom } from '../socket/socketClient';
 
 interface JoinGameProps {}
 
@@ -17,29 +17,29 @@ function JoinGame({}: JoinGameProps) {
   const activeGame = useStoreState((state: any) => state.activeGame);
 
   const modalProps = {
-    title: "Error",
-    body: "",
-    footer: "Close",
+    title: 'Error',
+    body: '',
+    footer: 'Close',
   };
 
   const onCreateGameRoom = async () => {
     try {
       await createGameRoom(activeGame || 'Unknown Game', rivals);
-      navigate(`/${activeGame?.toLowerCase().replace(/\s+/g, "-")}`);
+      navigate(`/${activeGame?.toLowerCase().replace(/\s+/g, '-')}`);
     } catch (error: any) {
       setIsModalVisible(true);
-      setError(error.message || "Failed to create game room");
+      setError(error.message || 'Failed to create game room');
     }
   };
 
   const handleBackButton = () => {
-    navigate("/");
+    navigate('/');
   };
 
   useEffect(() => {
     try {
       if (!activeGame) {
-        navigate("/");
+        navigate('/');
       }
     } catch (error: any) {
       modalProps.body = error.message;

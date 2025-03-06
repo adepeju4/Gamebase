@@ -10,7 +10,7 @@ const cookies = new Cookies();
  */
 export const isAuthenticated = (): boolean => {
   const token = cookies.get('token');
-  console.log("Checking authentication status, token exists:", !!token);
+  console.log('Checking authentication status, token exists:', !!token);
   return !!token;
 };
 
@@ -28,7 +28,7 @@ export const getCurrentUser = (): User | null => {
     firstName: cookies.get('firstName'),
     lastName: cookies.get('lastName'),
     userName: cookies.get('userName'),
-    email: cookies.get('email')
+    email: cookies.get('email'),
   };
 };
 
@@ -50,7 +50,7 @@ export const logout = () => {
   cookies.remove('userId');
   cookies.remove('email');
   cookies.remove('token');
-  
+
   // Redirect to login page
   window.location.href = '/login';
 };
@@ -62,7 +62,7 @@ export const logout = () => {
 export const refreshUserProfile = async (): Promise<User | null> => {
   try {
     const result = await fetcher('/Api/Auth/profile', {
-      method: 'GET'
+      method: 'GET',
     });
 
     if (result.success && result.data) {
@@ -73,11 +73,11 @@ export const refreshUserProfile = async (): Promise<User | null> => {
         lastName: result.data.lastName,
         userName: result.data.userName,
         email: result.data.email,
-        online: result.data.status === 'online'
+        online: result.data.status === 'online',
       };
       return userData;
     }
-    
+
     return null;
   } catch (error) {
     console.error('Failed to refresh user profile:', error);
@@ -94,7 +94,7 @@ export const updateUserStatus = async (status: 'online' | 'offline' | 'away') =>
   try {
     const result = await fetcher('/Api/Auth/status', {
       method: 'PUT',
-      body: { status }
+      body: { status },
     });
 
     return result.success;
@@ -102,4 +102,4 @@ export const updateUserStatus = async (status: 'online' | 'offline' | 'away') =>
     console.error('Failed to update user status:', error);
     return false;
   }
-}; 
+};

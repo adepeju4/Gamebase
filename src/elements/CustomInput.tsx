@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Textarea } from "../components/ui/textarea";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardFooter } from "../components/ui/card";
+import { Textarea } from '../components/ui/textarea';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardFooter } from '../components/ui/card';
 
 function CustomInput() {
   const [message, setMessage] = useState('');
@@ -20,7 +20,7 @@ function CustomInput() {
     <Card className="w-full">
       <form onSubmit={handleSubmit}>
         <CardContent className="pt-4">
-          <Textarea 
+          <Textarea
             placeholder="Type your message"
             value={message}
             onChange={handleChange}
@@ -28,9 +28,7 @@ function CustomInput() {
           />
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button type="submit">
-            Send Message
-          </Button>
+          <Button type="submit">Send Message</Button>
         </CardFooter>
       </form>
     </Card>

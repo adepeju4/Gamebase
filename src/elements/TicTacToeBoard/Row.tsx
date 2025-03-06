@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import Square from "./Square";
+import Square from './Square';
 
 interface RowProps {
   columns: string[];

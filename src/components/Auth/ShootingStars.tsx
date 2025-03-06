@@ -18,4 +18,4 @@ const ShootingStars: React.FC = () => {
   );
 };
 
-export default ShootingStars; 
+export default ShootingStars;

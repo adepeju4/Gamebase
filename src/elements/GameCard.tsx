@@ -1,6 +1,13 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface GameCardProps {
   title: string;
@@ -19,9 +26,9 @@ function GameCard({ title, description, imageSrc, path }: GameCardProps) {
   return (
     <Card className="w-[300px] overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="h-[160px] overflow-hidden">
-        <img 
-          src={imageSrc} 
-          alt={title} 
+        <img
+          src={imageSrc}
+          alt={title}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
         />
       </div>
@@ -43,4 +50,4 @@ function GameCard({ title, description, imageSrc, path }: GameCardProps) {
   );
 }
 
-export default GameCard; 
+export default GameCard;

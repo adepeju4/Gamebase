@@ -17,16 +17,16 @@ export const initializeSocket = (): Socket => {
 
   const cookies = new Cookies();
   const token = cookies.get('token');
-  
+
   if (!token) {
     throw new Error('Authentication token not found');
   }
 
   socket = io(getBaseUrl(), {
     auth: {
-      token
+      token,
     },
-    transports: ['websocket', 'polling']
+    transports: ['websocket', 'polling'],
   });
 
   // Set up event listeners
@@ -40,7 +40,7 @@ export const initializeSocket = (): Socket => {
     store.getActions().setSocketConnected(false);
   });
 
-  socket.on('error', (error) => {
+  socket.on('error', error => {
     console.error('Socket error:', error);
   });
 
@@ -68,20 +68,20 @@ export const getSocket = (): Socket => {
 export const createGameRoom = (gameType: string, rivals: string[]): Promise<string> => {
   return new Promise((resolve, reject) => {
     const socket = getSocket();
-    
+
     socket.emit('room:create', { gameType, rivals });
-    
+
     socket.once('room:created', (data: { roomId: string }) => {
       // Store the room in the global state
       store.getActions().setGameRoom({
         id: data.roomId,
         name: gameType,
         players: [],
-        rivals
+        rivals,
       });
       resolve(data.roomId);
     });
-    
+
     socket.once('room:error', (error: string) => {
       reject(new Error(error));
     });
@@ -92,13 +92,13 @@ export const createGameRoom = (gameType: string, rivals: string[]): Promise<stri
 export const joinGameRoom = (roomId: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const socket = getSocket();
-    
+
     socket.emit('room:join', { roomId });
-    
+
     socket.once('room:players', () => {
       resolve();
     });
-    
+
     socket.once('room:error', (error: string) => {
       reject(new Error(error));
     });
@@ -115,15 +115,15 @@ export const makeGameMove = (roomId: string, move: any): void => {
 export const sendChatMessage = (roomId: string, text: string): void => {
   const cookies = new Cookies();
   const userName = cookies.get('userName');
-  
+
   const socket = getSocket();
-  socket.emit('chat:message', { 
-    roomId, 
+  socket.emit('chat:message', {
+    roomId,
     message: {
       text,
       sender: userName,
-      timestamp: new Date()
-    } 
+      timestamp: new Date(),
+    },
   });
 };
 
@@ -134,5 +134,5 @@ export default {
   createGameRoom,
   joinGameRoom,
   makeGameMove,
-  sendChatMessage
-}; 
+  sendChatMessage,
+};

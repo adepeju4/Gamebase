@@ -60,4 +60,4 @@ router.get('/users/search', ConversationController.searchUsers, (_, res) => {
   res.status(200).json(res.locals.users);
 });
 
-export default router; 
+export default router;

@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "./ui/card";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Socket } from "socket.io-client";
-import Cookies from "universal-cookie";
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from './ui/card';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Socket } from 'socket.io-client';
+import Cookies from 'universal-cookie';
 
 interface Message {
   id: string;
@@ -19,20 +19,20 @@ interface MessageBoxProps {
 
 function MessageBox({ roomId, socket }: MessageBoxProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const cookies = new Cookies();
-  const userName = cookies.get("userName");
+  const userName = cookies.get('userName');
 
   useEffect(() => {
     if (!socket || !roomId) return;
 
     // Listen for new messages
-    socket.on("chat:message", (message: Message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+    socket.on('chat:message', (message: Message) => {
+      setMessages(prevMessages => [...prevMessages, message]);
     });
 
     return () => {
-      socket.off("chat:message");
+      socket.off('chat:message');
     };
   }, [socket, roomId]);
 
@@ -47,10 +47,10 @@ function MessageBox({ roomId, socket }: MessageBoxProps) {
     };
 
     // Send message to server
-    socket.emit("chat:message", { roomId, message });
-    
+    socket.emit('chat:message', { roomId, message });
+
     // Clear input
-    setNewMessage("");
+    setNewMessage('');
   };
 
   return (
@@ -59,18 +59,16 @@ function MessageBox({ roomId, socket }: MessageBoxProps) {
         <div className="border-b pb-2 mb-4">
           <h3 className="text-lg font-semibold">Chat</h3>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto mb-4">
           {messages.length === 0 ? (
             <p className="text-gray-500 text-center">No messages yet</p>
           ) : (
-            messages.map((msg) => (
+            messages.map(msg => (
               <div
                 key={msg.id}
                 className={`mb-2 p-2 rounded-lg ${
-                  msg.sender === userName
-                    ? "bg-blue-100 ml-auto"
-                    : "bg-gray-100"
+                  msg.sender === userName ? 'bg-blue-100 ml-auto' : 'bg-gray-100'
                 } max-w-[80%]`}
               >
                 <div className="font-semibold text-sm">{msg.sender}</div>
@@ -82,11 +80,11 @@ function MessageBox({ roomId, socket }: MessageBoxProps) {
             ))
           )}
         </div>
-        
+
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <Input
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={e => setNewMessage(e.target.value)}
             placeholder="Type a message..."
             disabled={!socket || !roomId}
           />

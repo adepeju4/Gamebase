@@ -1,8 +1,8 @@
-import React, { useEffect, Dispatch, SetStateAction } from "react";
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 
-import Cookies from "universal-cookie";
-import { StoreActions, useStoreActions } from "easy-peasy";
-import { User } from "../types/declarations";
+import Cookies from 'universal-cookie';
+import { StoreActions, useStoreActions } from 'easy-peasy';
+import { User } from '../types/declarations';
 
 interface ProviderProps {
   user: User | null;
@@ -12,37 +12,32 @@ interface ProviderProps {
 
 function Provider({ user, children, setUser: externalSetUser }: ProviderProps) {
   const cookies = new Cookies();
- 
+
   const setUser = useStoreActions((actions: StoreActions<any>) => actions.setUser);
 
-  const token = cookies.get("token");
-
+  const token = cookies.get('token');
 
   useEffect(() => {
     if (token) {
-
       const userData = {
-        id: cookies.get("userId"),
-        userName: cookies.get("userName"),
-        firstName: cookies.get("firstName"),
-        lastName: cookies.get("lastName"),
-        email: cookies.get("email"),
+        id: cookies.get('userId'),
+        userName: cookies.get('userName'),
+        firstName: cookies.get('firstName'),
+        lastName: cookies.get('lastName'),
+        email: cookies.get('email'),
       } as User;
-      
-     
+
       setUser(userData);
       if (externalSetUser) externalSetUser(userData);
     } else {
-      console.log("Provider: No token found");
+      console.log('Provider: No token found');
     }
   }, [token, externalSetUser, setUser]);
 
   useEffect(() => {
     if (user) {
-     
       setUser(user);
     }
-  
   }, [user, setUser]);
 
   return <>{children}</>;

@@ -156,7 +156,7 @@ const AuthController = {
             token,
             status: 'online',
             lastActive: new Date(),
-          },
+          }
         );
 
         res.locals.user = {
@@ -276,7 +276,7 @@ const AuthController = {
           status,
           lastActive: new Date(),
         },
-        { new: true },
+        { new: true }
       );
 
       if (!updatedUser) {

@@ -11,7 +11,7 @@ mongoose.connection.on('reconnect', () => {
   console.log('Database reconnected');
 });
 
-mongoose.connection.on('error', (error) => {
+mongoose.connection.on('error', error => {
   console.error(`Database connection error: ${error}`);
   process.exit(-1);
 });
@@ -22,7 +22,7 @@ const startDB = () => {
     console.error('CONNECT_API environment variable is not defined');
     process.exit(-1);
   }
-  
+
   mongoose.connect(connectionString);
   // Only log database connection in development mode
   if (process.env.NODE_ENV !== 'production') {

@@ -1,7 +1,7 @@
-import Star from "../assets/bigStar.svg";
-import { ReactNode } from "react";
-import PropTypes from "prop-types";
-import { Card, CardContent } from "../components/ui/card";
+import Star from '../assets/bigStar.svg';
+import { ReactNode } from 'react';
+import PropTypes from 'prop-types';
+import { Card, CardContent } from '../components/ui/card';
 
 interface LayoutProps {
   children: ReactNode;

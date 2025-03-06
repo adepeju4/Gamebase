@@ -1,30 +1,29 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import TicTacToe from "./components/Game/TicTacToe";
-import Ludo from "./components/Game/Ludo";
-import Chess from "./components/Game/Chess";
-import { StoreProvider } from "easy-peasy";
-import store from "./lib/store";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import SignUp from "./components/Auth/SignUp";
-import LogIn from "./components/Auth/Login";
+import TicTacToe from './components/Game/TicTacToe';
+import Ludo from './components/Game/Ludo';
+import Chess from './components/Game/Chess';
+import { StoreProvider } from 'easy-peasy';
+import store from './lib/store';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import SignUp from './components/Auth/SignUp';
+import LogIn from './components/Auth/Login';
 
+import ChooseGame from './components/ChooseGame';
+import Provider from './components/Provider';
+import JoinGame from './components/JoinGame';
+import ProtectedRoute from './components/ProtectedRoute';
 
-import ChooseGame from "./components/ChooseGame";
-import Provider from "./components/Provider";
-import JoinGame from "./components/JoinGame";
-import ProtectedRoute from "./components/ProtectedRoute";
-
-import { User } from "./types/declarations";
-import { getCurrentUser } from "./lib/auth";
+import { User } from './types/declarations';
+import { getCurrentUser } from './lib/auth';
 
 function App() {
   // Initialize user from auth utility
   const [user, setUser] = useState<User | null>(getCurrentUser());
-  
+
   const router = createBrowserRouter([
     {
-      path: "/signup",
+      path: '/signup',
       element: (
         <ProtectedRoute requireAuth={false}>
           <SignUp />
@@ -32,7 +31,7 @@ function App() {
       ),
     },
     {
-      path: "/login",
+      path: '/login',
       element: (
         <ProtectedRoute requireAuth={false}>
           <LogIn />
@@ -40,7 +39,7 @@ function App() {
       ),
     },
     {
-      path: "/",
+      path: '/',
       element: (
         <ProtectedRoute>
           <Provider user={user} setUser={setUser}>
@@ -51,7 +50,7 @@ function App() {
       index: true,
     },
     {
-      path: "/join",
+      path: '/join',
       element: (
         <ProtectedRoute>
           <Provider user={user} setUser={setUser}>
@@ -61,7 +60,7 @@ function App() {
       ),
     },
     {
-      path: "/tic-tac-toe",
+      path: '/tic-tac-toe',
       element: (
         <ProtectedRoute>
           <Provider user={user} setUser={setUser}>
@@ -70,31 +69,31 @@ function App() {
         </ProtectedRoute>
       ),
     },
-    { 
-      path: "/ludo", 
+    {
+      path: '/ludo',
       element: (
         <ProtectedRoute>
           <Provider user={user} setUser={setUser}>
             <Ludo />
           </Provider>
         </ProtectedRoute>
-      ) 
+      ),
     },
-    { 
-      path: "/chess", 
+    {
+      path: '/chess',
       element: (
         <ProtectedRoute>
           <Provider user={user} setUser={setUser}>
             <Chess />
           </Provider>
         </ProtectedRoute>
-      ) 
+      ),
     },
     // Catch-all route - redirect to home
     {
-      path: "*",
-      element: <Navigate to="/" replace />
-    }
+      path: '*',
+      element: <Navigate to="/" replace />,
+    },
   ]);
 
   return (

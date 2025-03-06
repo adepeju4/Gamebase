@@ -62,4 +62,4 @@ For local development, continue using:
 npm run dev
 ```
 
-This will start both the client and server in development mode. 
+This will start both the client and server in development mode.

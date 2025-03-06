@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
-import { useStoreState } from "easy-peasy";
-import Navbar from "../Navbar/Navbar";
-import { useNavigate } from "react-router-dom";
-import MessageBox from "../MessageBox";
-import { initializeSocket, joinGameRoom } from "../../socket/socketClient";
-
+import { useEffect, useState } from 'react';
+import { useStoreState } from 'easy-peasy';
+import Navbar from '../Navbar/Navbar';
+import { useNavigate } from 'react-router-dom';
+import MessageBox from '../MessageBox';
+import { initializeSocket, joinGameRoom } from '../../socket/socketClient';
 
 function TicTacToe() {
   const rivals = useStoreState((state: any) => state.rivals);
   const gameRoom = useStoreState((state: any) => state.gameRoom);
   const navigate = useNavigate();
 
-
   const [socket, setSocket] = useState<any>(null);
   const [playersJoined, setPlayersJoined] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gameState, setGameState] = useState<any>({
-    board: Array(3).fill(null).map(() => Array(3).fill(null)),
+    board: Array(3)
+      .fill(null)
+      .map(() => Array(3).fill(null)),
     currentTurn: null,
-    winner: null
+    winner: null,
   });
 
   useEffect(() => {
@@ -40,20 +40,24 @@ function TicTacToe() {
       }
 
       // Listen for player updates
-      socketInstance.on('room:players', (data: { players: string[], currentTurn: string }) => {
+      socketInstance.on('room:players', (data: { players: string[]; currentTurn: string }) => {
         setPlayersJoined(data.players.length === 2);
         setGameState((prev: any) => ({
           ...prev,
-          currentTurn: data.currentTurn
+          currentTurn: data.currentTurn,
         }));
       });
 
       // Listen for game state updates
       socketInstance.on('game:state', (data: any) => {
         setGameState({
-          board: data.board || Array(3).fill(null).map(() => Array(3).fill(null)),
+          board:
+            data.board ||
+            Array(3)
+              .fill(null)
+              .map(() => Array(3).fill(null)),
           currentTurn: data.currentTurn,
-          lastMove: data.lastMove
+          lastMove: data.lastMove,
         });
       });
 
@@ -80,25 +84,25 @@ function TicTacToe() {
   }, [gameRoom]);
 
   useEffect(() => {
-    if (!gameRoom && !rivals.length) navigate("/");
+    if (!gameRoom && !rivals.length) navigate('/');
   }, [gameRoom, rivals, navigate]);
 
   const rivalName = rivals[0];
 
   const handleMove = (row: number, col: number) => {
     if (!socket || !gameRoom || !playersJoined) return;
-    
+
     // Send move to server
     socket.emit('game:move', {
       roomId: gameRoom.id,
-      move: { rowIndex: row, columnIndex: col }
+      move: { rowIndex: row, columnIndex: col },
     });
   };
 
   if (!playersJoined || !gameRoom || !socket) {
     return (
       <div className="loading h-screen w-screen flex items-center justify-center">
-        {error ? `Error: ${error}` : "Waiting for other players to join..."}
+        {error ? `Error: ${error}` : 'Waiting for other players to join...'}
       </div>
     );
   }
@@ -111,9 +115,9 @@ function TicTacToe() {
           <div className="game-board">
             <h2 className="text-2xl mb-4 text-center">Tic Tac Toe</h2>
             <p className="mb-4 text-center">Playing against: {rivalName}</p>
-            
+
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-            
+
             <div className="grid grid-cols-3 gap-2 w-64 mx-auto">
               {gameState.board.map((row: any[], rowIndex: number) => (
                 <div key={`row-${rowIndex}`} className="flex">
@@ -130,15 +134,15 @@ function TicTacToe() {
                 </div>
               ))}
             </div>
-            
+
             <p className="mt-4 text-center">
-              {gameState.winner 
-                ? `Winner: ${gameState.winner === socket.id ? 'You' : rivalName}` 
+              {gameState.winner
+                ? `Winner: ${gameState.winner === socket.id ? 'You' : rivalName}`
                 : `Current turn: ${gameState.currentTurn === socket.id ? 'Your turn' : `${rivalName}'s turn`}`}
             </p>
           </div>
         </div>
-        
+
         <MessageBox roomId={gameRoom.id} socket={socket} />
       </div>
     </div>
