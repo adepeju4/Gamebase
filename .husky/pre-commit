@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run lint-staged
-npx lint-staged
+# Increase Node.js memory limit
+export NODE_OPTIONS="--max-old-space-size=4096"
+
+# Format files
+npx lint-staged --no-stash
+
+# Type check (optional - uncomment if you want to run type checking on commit)
+# npm run type-check

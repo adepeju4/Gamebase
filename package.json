@@ -20,6 +20,7 @@
     "tsc": "npx tsc -p tsconfig.json",
     "tsc:server": "npx tsc -p server/tsconfig.json",
     "type-check": "npx tsc --noEmit",
+    "type-check:staged": "tsc-files --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\" \"server/**/*.{ts,js}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\" \"server/**/*.{ts,js}\"",
     "lint-staged": "lint-staged",
