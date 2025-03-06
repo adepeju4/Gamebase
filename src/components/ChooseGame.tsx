@@ -7,14 +7,13 @@ import { useStoreActions } from "easy-peasy";
 import { useStoreState } from "easy-peasy";
 
 import Navbar from "./Navbar/Navbar";
-import { StreamChat } from "stream-chat";
 import { useNavigate } from "react-router-dom";
+import GameCard from "../elements/GameCard";
 
 function ChooseGame() {
   const setGame = useStoreActions((state) => state.setActiveGame);
   const setGamePath = useStoreActions((state) => state.setActiveGamePath);
   const selectedGame = useStoreState((state) => state.activeGame);
-  const client = StreamChat.getInstance(import.meta.env.VITE_KEY);
 
   const navigate = useNavigate();
 
@@ -22,35 +21,20 @@ function ChooseGame() {
     {
       gameImg: tictactoe,
       gameName: "Tic Tac Toe",
+      description: "Classic game of X's and O's",
       path: "/tic-tac-toe",
     },
     {
       gameImg: chess,
       gameName: "Chess",
+      description: "Strategic board game of kings and queens",
       path: "/chess",
     },
     {
       gameImg: ludo,
       gameName: "Ludo",
+      description: "Fun board game of dice and tokens",
       path: "/ludo",
-    },
-  ];
-
-  const colorScheme = [
-    {
-      imgBg: "#FFA800",
-      borderBg: "#FF8A00",
-      textBg: "#F3501D",
-    },
-    {
-      imgBg: "#EB00FF",
-      borderBg: "#FF00A8",
-      textBg: "#7213EB",
-    },
-    {
-      imgBg: "#391898",
-      borderBg: "#843CE0",
-      textBg: "#451CBB",
     },
   ];
 
@@ -66,51 +50,38 @@ function ChooseGame() {
   }, [selectedGame]);
 
   return (
-    <>
-      <Navbar client={client} />
+    <div className="min-h-screen bg-gradient-to-b from-purple-900 to-indigo-900">
+      <Navbar />
 
-      <div className="selectGame_wrapper">
-        <header className="selectGame_header">
-          <p className="selectgame-title">Select Game</p>
+      <div className="container mx-auto px-4 py-8">
+        <header className="flex justify-between items-center mb-12">
+          <h1 className="text-4xl font-bold text-white">Select Game</h1>
 
-          <div className="gamePoints">
-            <img src={selectImg} alt={"select game"} />
-            <p className="gamePoints">0</p>
+          <div className="flex items-center gap-4">
+            <img src={selectImg} alt={"select game"} className="w-12 h-12" />
+            <p className="text-2xl font-bold text-white">0</p>
           </div>
         </header>
 
-        <section className="gameList">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
           {gameOptions.map((game, index) => (
             <div
-              className="gameSelector"
+              key={`game-${index}`}
               onClick={() => {
                 handleActiveGame(game.gameName, game.path);
               }}
-              key={`keykey${index}`}
             >
-              <div
-                className="game_img"
-                style={{
-                  background: colorScheme[index].imgBg,
-                  border: `2px solid ${colorScheme[index].borderBg}`,
-                }}
-              >
-                <img src={game.gameImg} alt={game.gameName} />
-              </div>
-              <div
-                className="game_title"
-                style={{
-                  backgroundColor: colorScheme[index].textBg,
-                  border: `2px solid ${colorScheme[index].borderBg}`,
-                }}
-              >
-                {game.gameName}
-              </div>
+              <GameCard
+                title={game.gameName}
+                description={game.description}
+                imageSrc={game.gameImg}
+                path={game.path}
+              />
             </div>
           ))}
         </section>
       </div>
-    </>
+    </div>
   );
 }
 

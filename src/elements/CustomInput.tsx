@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import '../scss/_game.scss';
+import { Textarea } from "../components/ui/textarea";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardFooter } from "../components/ui/card";
 
 function CustomInput() {
   const [message, setMessage] = useState('');
@@ -15,19 +17,23 @@ function CustomInput() {
   };
 
   return (
-    <div className="str-chat__input-flat str-chat__input-flat--send-button-active">
-      <div className="str-chat__input-flat-wrapper">
-        <div className="str-chat__input-flat--textarea-wrapper">
-          <textarea 
-            className="str-chat__textarea"
+    <Card className="w-full">
+      <form onSubmit={handleSubmit}>
+        <CardContent className="pt-4">
+          <Textarea 
             placeholder="Type your message"
             value={message}
             onChange={handleChange}
+            className="min-h-[100px] resize-none"
           />
-        </div>
-        <button onClick={handleSubmit}> Send Message</button>
-      </div>
-    </div>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button type="submit">
+            Send Message
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   );
 }
 

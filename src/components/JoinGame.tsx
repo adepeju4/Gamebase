@@ -1,28 +1,20 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import JoinGameForm from "../elements/JoinGameForm/JoinGameForm";
 import BackButton from "../elements/BackButton";
 import Modal from "../elements/Modal/Modal";
-import { v4 as uuidv4 } from "uuid";
-// import Cookies from "universal-cookie";
 import Navbar from "./Navbar/Navbar";
-import { StreamChat } from "stream-chat";
+import { createGameRoom } from "../socket/socketClient";
 
-// const cookies = new Cookies();
+interface JoinGameProps {}
 
-interface JoinGameProps {
-  client: StreamChat; 
-}
-
-function JoinGame({ client }: JoinGameProps) {
+function JoinGame({}: JoinGameProps) {
   const navigate = useNavigate();
   const [rivals, setRivals] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const activeGame = useStoreState((state: any) => state.activeGame);
-  const setChannel = useStoreActions((actions: any) => actions.setChannel);
 
   const modalProps = {
     title: "Error",
@@ -30,33 +22,13 @@ function JoinGame({ client }: JoinGameProps) {
     footer: "Close",
   };
 
-  const onCreateChannel = async () => {
+  const onCreateGameRoom = async () => {
     try {
-      const channelId = uuidv4();
-      const newChannel = client.channel("gaming", channelId, {
-        name: activeGame,
-        members: [client.userID || ""],
-      });
-
-      await newChannel.create();
-      setChannel(newChannel);
-
-      // Query for rivals
-      const queryPromises = rivals.map((rivalName: string) =>
-        client.queryUsers({ name: rivalName })
-      );
-
-      const queryResults = await Promise.all(queryPromises);
-      const rivalUsers = queryResults.flatMap((result) => result.users);
-
-      if (rivalUsers.length) {
-        await newChannel.addMembers(rivalUsers.map((user) => user.id));
-      }
-
-      navigate(`/${activeGame.toLowerCase().replace(/\s+/g, "-")}`);
-    } catch (error) {
+      await createGameRoom(activeGame || 'Unknown Game', rivals);
+      navigate(`/${activeGame?.toLowerCase().replace(/\s+/g, "-")}`);
+    } catch (error: any) {
       setIsModalVisible(true);
-      setError("Failed to create channel");
+      setError(error.message || "Failed to create game room");
     }
   };
 
@@ -78,16 +50,15 @@ function JoinGame({ client }: JoinGameProps) {
 
   return (
     <>
-      <Navbar client={client} />
+      <Navbar />
       <div className="joinGameContainer">
         <BackButton handleBackButton={handleBackButton} />
         <div className="joinGameContent">
           <h1>Join {activeGame} Game</h1>
           <JoinGameForm
             game={activeGame}
-            onCreateChannel={onCreateChannel}
+            onCreateGameRoom={onCreateGameRoom}
             setRivals={setRivals}
-            client={client}
           />
         </div>
         {isModalVisible && (

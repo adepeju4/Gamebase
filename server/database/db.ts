@@ -4,15 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 mongoose.connection.on('disconnected', () => {
-  console.warn(`lost database connection`);
+  console.warn(`Database connection lost`);
 });
 
 mongoose.connection.on('reconnect', () => {
-  console.log('-> database reconnected');
+  console.log('Database reconnected');
 });
 
 mongoose.connection.on('error', (error) => {
-  console.error(`Could not connect because of ${error}`);
+  console.error(`Database connection error: ${error}`);
   process.exit(-1);
 });
 
@@ -24,9 +24,12 @@ const startDB = () => {
   }
   
   mongoose.connect(connectionString);
-  mongoose.connection.on('connected', () => {
-    console.log('Database connected');
-  });
+  // Only log database connection in development mode
+  if (process.env.NODE_ENV !== 'production') {
+    mongoose.connection.on('connected', () => {
+      console.log('Database connected');
+    });
+  }
 };
 
 export default startDB;

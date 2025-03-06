@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { StreamChat } from "stream-chat";
 
 interface JoinGameFormProps {
   game: string | null;
-  onCreateChannel: () => Promise<void>;
+  onCreateGameRoom: () => Promise<void>;
   setRivals: React.Dispatch<React.SetStateAction<string[]>>;
-  client: StreamChat;
 }
 
-function JoinGameForm({ onCreateChannel, setRivals }: JoinGameFormProps) {
+function JoinGameForm({ onCreateGameRoom, setRivals }: JoinGameFormProps) {
   const [rivalName, setRivalName] = useState("");
 
   const handleChangeSingle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +19,7 @@ function JoinGameForm({ onCreateChannel, setRivals }: JoinGameFormProps) {
     e.preventDefault();
     if (rivalName) {
       setRivals([rivalName]);
-      onCreateChannel();
+      onCreateGameRoom();
     }
   };
 

@@ -16,6 +16,11 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
+  email: {
+    type: 'string',
+    required: true,
+    unique: true,
+  },
   password: {
     type: 'string',
     required: true,
@@ -28,6 +33,27 @@ const userSchema = new Schema({
     type: 'string',
     required: true,
   },
+  conversations: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Conversation'
+  }],
+  unreadMessages: {
+    type: Number,
+    default: 0
+  },
+  status: {
+    type: String,
+    enum: ['online', 'offline', 'away'],
+    default: 'offline'
+  },
+  profileImage: {
+    type: String,
+    default: ''
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const User = mongoose.model('user', userSchema);

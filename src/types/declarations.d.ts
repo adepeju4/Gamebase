@@ -48,6 +48,7 @@ declare module 'stream-chat-react' {
 export interface User {
   id: string;
   userName: string;
+  email?: string;
   image?: string;
   online?: boolean;
   firstName: string;

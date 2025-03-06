@@ -1,28 +1,37 @@
-
-import BackButton from "../../elements/BackButton";
-
 import PropTypes from "prop-types";
 import Cookies from "universal-cookie";
 import { useStoreActions } from "easy-peasy";
 import { useLocation, useNavigate } from "react-router-dom";
-import { StreamChat } from "stream-chat";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
-function Navbar({ client }: { client: StreamChat }) {
+function Navbar() {
   const cookies = new Cookies();
   const navigate = useNavigate();
   const setGame = useStoreActions((state) => state.setActiveGame);
   const setUser = useStoreActions((state) => state.setUser);
 
   const location = useLocation();
+  const userName = cookies.get("userName") || "User";
+  const firstName = cookies.get("firstName") || "";
+  const lastName = cookies.get("lastName") || "";
 
   const handleLogOut = () => {
     cookies.remove("userId");
     cookies.remove("userName");
     cookies.remove("firstName");
     cookies.remove("lastName");
+    cookies.remove("email");
     cookies.remove("hashedPassword");
     cookies.remove("token");
-    client.disconnectUser();
     setUser(null);
     navigate("/login");
   };
@@ -33,20 +42,38 @@ function Navbar({ client }: { client: StreamChat }) {
   };
 
   return (
-    <nav>
-      <button onClick={handleLogOut} id="logout" className="text-large">
-        Log Out
-      </button>
-
-      {location.pathname === "/join" && (
-        <BackButton handleBackButton={handleBack} />
-      )}
+    <nav className="flex justify-between items-center p-4 bg-black/20 backdrop-blur-sm">
+      <div className="flex items-center">
+        {location.pathname === "/join" && (
+          <Button variant="ghost" onClick={handleBack} className="mr-4">
+            ← Back
+          </Button>
+        )}
+        <h1 className="text-2xl font-bold text-white">Games FM</h1>
+      </div>
+      
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+            <Avatar>
+              <AvatarImage src={`https://ui-avatars.com/api/?name=${firstName}+${lastName}`} />
+              <AvatarFallback>{userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate("/")}>
+            Games
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogOut}>
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </nav>
   );
 }
-
-Navbar.propTypes = {
-  client: PropTypes.object.isRequired,
-};
 
 export default Navbar;

@@ -3,6 +3,7 @@ interface SignupFields {
   password: string;
   firstName: string;
   lastName: string;
+  email: string;
 }
 
 interface LoginFields {
@@ -21,6 +22,7 @@ const validateFields = (mode: Mode, fields: Fields): string[] => {
     const signupFields = fields as SignupFields;
     !signupFields.lastName && output.push('No last name provided');
     !signupFields.firstName && output.push('No firstName provided');
+    !signupFields.email && output.push('No email provided');
   }
   return output;
 };

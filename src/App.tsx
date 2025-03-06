@@ -1,77 +1,106 @@
 import { useState } from "react";
 
-import "./scss/global.scss";
 import TicTacToe from "./components/Game/TicTacToe";
 import Ludo from "./components/Game/Ludo";
 import Chess from "./components/Game/Chess";
 import { StoreProvider } from "easy-peasy";
 import store from "./lib/store";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import SignUp from "./components/Auth/SignUp";
 import LogIn from "./components/Auth/Login";
 import ShootingStars from "./elements/ShootingStars";
 
 import ChooseGame from "./components/ChooseGame";
 import Provider from "./components/Provider";
-import Layout from "./pages/Layout";
 import JoinGame from "./components/JoinGame";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-import { StreamChat } from "stream-chat";
 import { User } from "./types/declarations";
+import { getCurrentUser } from "./lib/auth";
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const client = StreamChat.getInstance(import.meta.env.VITE_KEY);
+  // Initialize user from auth utility
+  const [user, setUser] = useState<User | null>(getCurrentUser());
+  
   const router = createBrowserRouter([
     {
       path: "/signup",
       element: (
-        <Layout>
+        <ProtectedRoute requireAuth={false}>
           <SignUp />
-        </Layout>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/login",
       element: (
-        <Layout>
+        <ProtectedRoute requireAuth={false}>
           <LogIn />
-        </Layout>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/",
       element: (
-        <Provider user={user} setUser={setUser} client={client}>
-          <ChooseGame />
-        </Provider>
+        <ProtectedRoute>
+          <Provider user={user} setUser={setUser}>
+            <ChooseGame />
+          </Provider>
+        </ProtectedRoute>
       ),
+      index: true,
     },
     {
       path: "/join",
       element: (
-        <Provider user={user} setUser={setUser} client={client}>
-          <JoinGame client={client} />
-        </Provider>
+        <ProtectedRoute>
+          <Provider user={user} setUser={setUser}>
+            <JoinGame />
+          </Provider>
+        </ProtectedRoute>
       ),
     },
     {
-      path: "tic-tac-toe",
+      path: "/tic-tac-toe",
       element: (
-        <Provider user={user} client={client} setUser={setUser}>
-          <TicTacToe />
-        </Provider>
+        <ProtectedRoute>
+          <Provider user={user} setUser={setUser}>
+            <TicTacToe />
+          </Provider>
+        </ProtectedRoute>
       ),
     },
-    { path: "ludo", element: <Ludo /> },
-    { path: "chess", element: <Chess /> },
+    { 
+      path: "/ludo", 
+      element: (
+        <ProtectedRoute>
+          <Provider user={user} setUser={setUser}>
+            <Ludo />
+          </Provider>
+        </ProtectedRoute>
+      ) 
+    },
+    { 
+      path: "/chess", 
+      element: (
+        <ProtectedRoute>
+          <Provider user={user} setUser={setUser}>
+            <Chess />
+          </Provider>
+        </ProtectedRoute>
+      ) 
+    },
+    // Catch-all route - redirect to home
+    {
+      path: "*",
+      element: <Navigate to="/" replace />
+    }
   ]);
 
   return (
-    <div className="App">
+    <div className="w-screen h-screen block relative">
       <StoreProvider store={store}>
         <RouterProvider router={router} />
-        <ShootingStars />
       </StoreProvider>
     </div>
   );

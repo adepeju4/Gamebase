@@ -1,4 +1,5 @@
 import { createStore, action } from 'easy-peasy';
+import { User } from '../types/declarations';
 
 interface GameStats {
   wins: number;
@@ -6,28 +7,38 @@ interface GameStats {
   draws: number;
 }
 
+interface GameRoom {
+  id: string;
+  name: string;
+  players: string[];
+  rivals: string[];
+}
+
 interface StoreModel {
   user: User | null;
   activeGame: string | null;
   activeGamePath: string | null;
-  channel: any;
-  rivals: any[];
+  gameRoom: GameRoom | null;
+  rivals: string[];
   gameStats: Record<string, GameStats>;
+  socketConnected: boolean;
   setUser: (state: StoreModel, payload: User | null) => void;
   setActiveGame: (state: StoreModel, payload: string) => void;
   setActiveGamePath: (state: StoreModel, payload: string) => void;
-  setChannel: (state: StoreModel, payload: any) => void;
-  setRivals: (state: StoreModel, payload: any[]) => void;
+  setGameRoom: (state: StoreModel, payload: GameRoom | null) => void;
+  setRivals: (state: StoreModel, payload: string[]) => void;
   setGameStat: (state: StoreModel, payload: { gameId: string, outcome: 'win' | 'loss' | 'draw' }) => void;
+  setSocketConnected: (state: StoreModel, payload: boolean) => void;
 }
 
 const store = createStore<StoreModel>({
   user: null,
   activeGame: null,
   activeGamePath: null,
-  channel: null,
+  gameRoom: null,
   rivals: [],
   gameStats: {},
+  socketConnected: false,
   
   setUser: action((state, payload) => {
     state.user = payload;
@@ -41,8 +52,8 @@ const store = createStore<StoreModel>({
     state.activeGamePath = payload;
   }),
   
-  setChannel: action((state, payload) => {
-    state.channel = payload;
+  setGameRoom: action((state, payload) => {
+    state.gameRoom = payload;
   }),
   
   setRivals: action((state, payload) => {
@@ -57,6 +68,10 @@ const store = createStore<StoreModel>({
     }
     
     state.gameStats[gameId][outcome === 'win' ? 'wins' : outcome === 'loss' ? 'losses' : 'draws']++;
+  }),
+  
+  setSocketConnected: action((state, payload) => {
+    state.socketConnected = payload;
   }),
 });
 
