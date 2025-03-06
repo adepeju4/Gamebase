@@ -1,5 +1,5 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { StoreActions, useStoreActions } from 'easy-peasy';
 import { User } from '../types/declarations';
@@ -12,7 +12,7 @@ interface ProviderProps {
 
 function Provider({ user, children, setUser: externalSetUser }: ProviderProps) {
   const cookies = new Cookies();
-
+  const navigate = useNavigate();
   const setUser = useStoreActions((actions: StoreActions<any>) => actions.setUser);
 
   const token = cookies.get('token');
@@ -29,8 +29,6 @@ function Provider({ user, children, setUser: externalSetUser }: ProviderProps) {
 
       setUser(userData);
       if (externalSetUser) externalSetUser(userData);
-    } else {
-      console.log('Provider: No token found');
     }
   }, [token, externalSetUser, setUser]);
 

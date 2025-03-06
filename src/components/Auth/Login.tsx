@@ -43,18 +43,13 @@ function LogIn() {
     try {
       setPending(true);
 
-      console.log('Submitting login form with values:', values);
-
       const result = await fetcher('/Api/Auth/login', {
         method: 'POST',
         body: values,
       });
 
-      console.log('Login API response:', result);
-
       if (result.success && result.data) {
         const userData = result.data;
-        console.log('Login successful, user data:', userData);
 
         // Store user data in cookies
         cookies.set('firstName', userData.firstName);
@@ -63,31 +58,21 @@ function LogIn() {
         cookies.set('email', userData.email);
         cookies.set('userId', userData.userId);
 
-        // Store JWT token with proper configuration
         cookies.set('token', userData.token, {
           path: '/',
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
-          // Don't set an expiry here - let the JWT itself handle expiration
         });
 
-        toast.success('Login successful! Welcome back.');
-        console.log('Attempting to navigate to homepage...');
+        toast.success('Login successful! Welcome back.', {
+          duration: 1000,
+          onAutoClose: () => {
+            navigate('/', { replace: true });
+          },
+        });
 
-        // Try both navigation methods to ensure redirection works
-        navigate('/');
-
-        // Use a direct approach as a fallback
-        setTimeout(() => {
-          console.log('Using direct navigation as fallback');
-          window.location.href = '/';
-        }, 100);
-
-        console.log('Navigation function called');
         return;
       } else {
-        // Handle specific error messages from the backend
-        console.log('Login failed:', result.error || result.data?.message);
         if (result.error) {
           toast.error(result.error);
         } else if (result.data?.message) {

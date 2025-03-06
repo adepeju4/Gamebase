@@ -10,7 +10,6 @@ const cookies = new Cookies();
  */
 export const isAuthenticated = (): boolean => {
   const token = cookies.get('token');
-  console.log('Checking authentication status, token exists:', !!token);
   return !!token;
 };
 

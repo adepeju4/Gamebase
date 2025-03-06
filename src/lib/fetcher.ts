@@ -1,6 +1,6 @@
 interface FetchOptions extends RequestInit {
   body?: any;
-  skipAuth?: boolean; // Option to skip authentication for public routes
+  skipAuth?: boolean;
 }
 
 interface FetcherResponse<T = any> {
@@ -24,15 +24,12 @@ const fetcher = async <T = any>(
   url: string,
   options: FetchOptions = {}
 ): Promise<FetcherResponse<T>> => {
-  // Create a new headers object
   const headers = new Headers(options.headers);
 
-  // Set content type if not already set
   if (!headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
-  // Add authorization header with JWT token if available and not explicitly skipped
   if (!options.skipAuth) {
     const token = cookies.get('token');
     if (token) {
@@ -62,9 +59,7 @@ const fetcher = async <T = any>(
       };
     }
 
-    // Handle authentication errors
     if (response.status === 401) {
-      // If token is expired or invalid, redirect to login
       if (url !== '/Api/Auth/login' && url !== '/Api/Auth/signup') {
         cookies.remove('token');
         window.location.href = '/login';
