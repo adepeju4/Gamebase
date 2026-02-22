@@ -2,7 +2,7 @@ import React, { useEffect, Dispatch, SetStateAction } from 'react';
 
 import Cookies from 'universal-cookie';
 import { StoreActions, useStoreActions } from 'easy-peasy';
-import { User } from '../types/declarations';
+import { User } from '../types/index';
 
 interface ProviderProps {
   user: User | null;

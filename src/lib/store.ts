@@ -1,5 +1,5 @@
 import { createStore, action } from 'easy-peasy';
-import { User } from '../types/declarations';
+import { User } from '../types/index';
 
 interface GameStats {
   wins: number;

@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useStoreState } from 'easy-peasy';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { toast } from 'sonner';
 import Cookies from 'universal-cookie';
 import fetcher from '../../lib/fetcher';
+import StatusDot from '../ui/StatusDot';
+import { UserStatus } from '../../types/index';
 
 // Profile component for managing user profile information
 function Profile() {
   const navigate = useNavigate();
   const cookies = new Cookies();
+  const status = useStoreState((state: any) => state.user?.status) as UserStatus | undefined;
 
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -109,16 +113,19 @@ function Profile() {
       <div className="mb-8">
         <h2 className="text-lg font-semibold mb-4">Profile picture</h2>
         <div className="flex justify-center">
-          <Avatar className="w-24 h-24">
-            <AvatarImage src={profileImage} alt={`${firstName} ${lastName}`} />
-            <AvatarFallback className="text-lg">
-              {userName
-                ? userName.substring(0, 2).toUpperCase()
-                : firstName && lastName
-                  ? `${firstName[0]}${lastName[0]}`
-                  : 'U'}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative inline-block">
+            <Avatar className="w-24 h-24">
+              <AvatarImage src={profileImage} alt={`${firstName} ${lastName}`} />
+              <AvatarFallback className="text-lg">
+                {userName
+                  ? userName.substring(0, 2).toUpperCase()
+                  : firstName && lastName
+                    ? `${firstName[0]}${lastName[0]}`
+                    : 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <StatusDot status={status} className="absolute bottom-1 right-1" />
+          </div>
         </div>
       </div>
 

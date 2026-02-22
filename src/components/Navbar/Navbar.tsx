@@ -1,5 +1,5 @@
 import Cookies from 'universal-cookie';
-import { useStoreActions } from 'easy-peasy';
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -11,6 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import StatusDot from '../ui/StatusDot';
+import { UserStatus } from '../../types/index';
 
 function Navbar() {
   const cookies = new Cookies();
@@ -22,6 +24,7 @@ function Navbar() {
   const userName = cookies.get('userName') || 'User';
   const firstName = cookies.get('firstName') || '';
   const lastName = cookies.get('lastName') || '';
+  const status = useStoreState((state: any) => state.user?.status) as UserStatus | undefined;
 
   const handleLogOut = () => {
     cookies.remove('userId');
@@ -58,6 +61,7 @@ function Navbar() {
               <AvatarImage src={`https://ui-avatars.com/api/?name=${firstName}+${lastName}`} />
               <AvatarFallback>{userName.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
+            <StatusDot status={status} className="absolute bottom-0 right-0" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
