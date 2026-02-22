@@ -87,7 +87,6 @@ const AuthController = {
           email,
           password: hashedPassword,
           userId,
-          token,
           status: 'online',
           lastActive: new Date(),
         };
@@ -153,7 +152,6 @@ const AuthController = {
         await User.updateOne(
           { userName },
           {
-            token,
             status: 'online',
             lastActive: new Date(),
           }

@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import Cookies from 'universal-cookie';
 import store from '../lib/store';
+import { logout } from '../lib/auth';
 
 let socket: Socket | null = null;
 
@@ -42,6 +43,14 @@ export const initializeSocket = (): Socket => {
 
   socket.on('error', error => {
     console.error('Socket error:', error);
+  });
+
+  // If the server rejects the connection due to auth, log the user out
+  socket.on('connect_error', error => {
+    console.error('Socket connection error:', error.message);
+    if (error.message.includes('Authentication error')) {
+      logout();
+    }
   });
 
   return socket;
@@ -111,17 +120,13 @@ export const makeGameMove = (roomId: string, move: any): void => {
   socket.emit('game:move', { roomId, move });
 };
 
-// Send a chat message
+// Send a chat message — sender is stamped server-side from the verified JWT identity
 export const sendChatMessage = (roomId: string, text: string): void => {
-  const cookies = new Cookies();
-  const userName = cookies.get('userName');
-
   const socket = getSocket();
   socket.emit('chat:message', {
     roomId,
     message: {
       text,
-      sender: userName,
       timestamp: new Date(),
     },
   });

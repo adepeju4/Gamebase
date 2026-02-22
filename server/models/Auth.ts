@@ -25,10 +25,6 @@ const userSchema = new Schema({
     type: 'string',
     required: true,
   },
-  token: {
-    type: 'string',
-    required: true,
-  },
   userId: {
     type: 'string',
     required: true,
