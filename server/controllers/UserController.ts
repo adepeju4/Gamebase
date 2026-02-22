@@ -5,6 +5,7 @@ import validateFields, { createError } from '../utils/validateFields.js';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
 import { generateToken } from '../utils/jwt.js';
+import { UserStatus } from '../types/enums.js';
 
 dotenv.config();
 
@@ -34,14 +35,6 @@ interface UserDocument {
   profileImage?: string;
   lastActive?: Date;
   unreadMessages?: number;
-}
-
-type statusType = 'online' | 'offline' | 'away';
-
-enum statusEnum {
-  'online' = 'online',
-  'offline' = 'offline',
-  'away' = 'away',
 }
 
 const AuthController = {
@@ -87,7 +80,7 @@ const AuthController = {
           email,
           password: hashedPassword,
           userId,
-          status: 'online',
+          status: UserStatus.Online,
           lastActive: new Date(),
         };
 
@@ -152,7 +145,7 @@ const AuthController = {
         await User.updateOne(
           { userName },
           {
-            status: 'online',
+            status: UserStatus.Online,
             lastActive: new Date(),
           }
         );
@@ -165,7 +158,7 @@ const AuthController = {
           userId: userExists.userId,
           token,
           conversations: userExists.conversations || [],
-          status: 'online',
+          status: UserStatus.Online,
           profileImage: userExists.profileImage,
           lastActive: new Date(),
           unreadMessages: userExists.unreadMessages || 0,
@@ -262,9 +255,9 @@ const AuthController = {
   updateUserStatus: async function (req: Request, res: Response, next: NextFunction) {
     try {
       const userId = res.locals.user.userId;
-      const { status } = req.body as { status: statusType };
+      const { status } = req.body as { status: UserStatus };
 
-      if (!statusEnum[status]) {
+      if (!Object.values(UserStatus).includes(status)) {
         return next(createError('Invalid status value'));
       }
 

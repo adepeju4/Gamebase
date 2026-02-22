@@ -14,7 +14,6 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     const token = extractTokenFromHeader(authHeader);
 
     if (!token) {
-      console.log('No token provided');
       return res.status(401).json({
         success: false,
         message: 'Access denied. No token provided.',
@@ -26,7 +25,6 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     const decoded = verifyToken(token);
 
     if (!decoded) {
-      console.log('Token verification failed');
       return res.status(401).json({
         success: false,
         message: 'Invalid or expired token.',
@@ -38,14 +36,11 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     const user = await User.findOne({ userId: decoded.userId });
 
     if (!user) {
-      console.log('User not found in database');
       return res.status(401).json({
         success: false,
         message: 'User not found.',
       });
     }
-
-    console.log('User found:', user.userName);
 
     await User.updateOne({ userId: decoded.userId }, { lastActive: new Date() });
 

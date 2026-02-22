@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { UserStatus } from '../types/enums.js';
 
 const Schema = mongoose.Schema;
 
@@ -41,8 +42,8 @@ const userSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['online', 'offline', 'away'],
-    default: 'offline',
+    enum: Object.values(UserStatus),
+    default: UserStatus.Offline,
   },
   profileImage: {
     type: String,
