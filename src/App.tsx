@@ -14,9 +14,16 @@ import Provider from './components/Provider';
 import JoinGame from './components/JoinGame';
 import ProtectedRoute from './components/ProtectedRoute';
 
-import { User } from './types/declarations';
+import { User } from './types/index';
 import { getCurrentUser } from './lib/auth';
 import Profile from './components/Profile/Profile';
+import { usePresence } from './hooks/usePresence';
+
+// Mounts presence tracking for the lifetime of the app
+function AppPresence() {
+  usePresence();
+  return null;
+}
 
 function App() {
   // Initialize user from auth utility
@@ -111,6 +118,7 @@ function App() {
   return (
     <div className="w-screen h-screen block relative">
       <StoreProvider store={store}>
+        <AppPresence />
         <RouterProvider router={router} />
       </StoreProvider>
     </div>

@@ -1,6 +1,6 @@
 import Cookies from 'universal-cookie';
 import fetcher from './fetcher';
-import { User } from '../types/declarations';
+import { User, UserStatus } from '../types/index';
 
 const cookies = new Cookies();
 
@@ -72,7 +72,7 @@ export const refreshUserProfile = async (): Promise<User | null> => {
         lastName: result.data.lastName,
         userName: result.data.userName,
         email: result.data.email,
-        online: result.data.status === 'online',
+        status: result.data.status as UserStatus,
       };
       return userData;
     }
@@ -89,7 +89,7 @@ export const refreshUserProfile = async (): Promise<User | null> => {
  * @param status New status ('online', 'offline', 'away')
  * @returns Success status
  */
-export const updateUserStatus = async (status: 'online' | 'offline' | 'away') => {
+export const updateUserStatus = async (status: UserStatus) => {
   try {
     const result = await fetcher('/Api/Auth/status', {
       method: 'PUT',
